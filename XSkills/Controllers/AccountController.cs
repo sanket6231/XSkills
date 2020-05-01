@@ -79,7 +79,7 @@ namespace XSkills.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    return Redirect("/Home/LoginHome");
+                    return Redirect("/KnowledgeHub/Index");
                     //return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");

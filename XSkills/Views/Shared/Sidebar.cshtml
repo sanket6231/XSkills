@@ -1,0 +1,62 @@
+﻿
+<div class="profile-sidebar">
+    <!-- SIDEBAR USERPIC -->
+    <div class="profile-userpic">
+        @if (ViewBag.ImageUrl != null)
+        {
+            <img src="@Url.Content(ViewBag.ImageUrl)" class="img-responsive" alt="Profile">
+        }
+        else
+        {
+            <img src="~/UploadedFiles/Images/profiles/User-blue-icon.png" class="img-responsive" alt="Profile">
+        }
+
+    </div>
+    <!-- END SIDEBAR USERPIC -->
+    <!-- SIDEBAR USER TITLE -->
+    <div class="profile-usertitle">
+        <div class="profile-usertitle-name">
+            @Html.Label((string)ViewBag.username)
+        </div>
+        @*<div class="profile-usertitle-job">
+                Developer
+            </div>*@
+    </div>
+    <!-- END SIDEBAR USER TITLE -->
+    <!-- SIDEBAR BUTTONS -->
+    <div class="profile-userbuttons">
+        @Html.ActionLink("My Profile","EditProfile","Home", new { @class = "btn btn-success btn-sm" })
+        @*<button type="button" class="btn btn-danger btn-sm">Message</button>*@
+    </div>
+    <!-- END SIDEBAR BUTTONS -->
+    <!-- SIDEBAR MENU -->
+    <div class="profile-usermenu">
+        <ul class="nav">
+            <li  class="active">
+                <a id="btn_knowlegdehub" onclick="@Url.Action("Index", "KnowledgeHub")">
+                    <i class="glyphicon glyphicon-user"></i>
+                    Knowledge Hub
+                </a>
+            </li>
+            <li>
+                <a id="btn_TeamMembers" onclick="@Url.Action("Index", "TeamMembers")">
+                    <i class="glyphicon glyphicon-home"></i>
+                    Our Team Members
+                </a>
+            </li>
+            <li>
+                <a id="btn_rateus" onclick="@Url.Action("RateUs", "Home")">
+                    <i class="glyphicon glyphicon-ok"></i>
+                    Rate Us
+                </a>
+            </li>
+            @*<li>
+            <a href="#">
+                <i class="glyphicon glyphicon-flag"></i>
+                Help
+            </a>
+        </li>*@
+        </ul>
+    </div>
+    <!-- END MENU -->
+</div>
