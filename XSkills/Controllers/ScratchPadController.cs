@@ -6,13 +6,11 @@ using System.Web.Mvc;
 
 namespace XSkills.Controllers
 {
-    public class KnowledgeHubController : Controller
+    public class ScratchPadController : Controller
     {
-        [Authorize]
-        // GET: KnowledgeHub
+        // GET: ScratchPad
         public ActionResult Index()
         {
-            ViewBag.Title = "Knowledge Hub";
             return View();
         }
     }

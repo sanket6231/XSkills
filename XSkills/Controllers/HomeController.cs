@@ -36,7 +36,7 @@ namespace XSkills.Controllers
         }
 
         [Authorize]
-        public ActionResult LoginHome()
+        public ActionResult LoginHome(string pagename)
         {
             string user = User.Identity.GetUserName();
             //var model = _userManager.FindByEmail(user);
@@ -46,6 +46,7 @@ namespace XSkills.Controllers
             User_Profile model = xSkills.User_Profile.Where(x => x.Name == name).FirstOrDefault();
             ViewBag.username = name;
             ViewBag.ImageUrl = model.ImgUrl;
+            ViewBag.page = pagename;
             return PartialView("Sidebar");
         }
 
@@ -99,6 +100,7 @@ namespace XSkills.Controllers
         [Authorize]
         public ActionResult RateUs()
         {
+            ViewBag.Title = "Rate Us";
             return View();
         }
     }

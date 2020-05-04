@@ -1,13 +1,16 @@
 ﻿body {
     padding-top: 50px;
     padding-bottom: 20px;
+    background-image: url(/UploadedFiles/Images/4e0f683f152c1e201daacd7e6bf6d9b8.png);
+    background-repeat: no-repeat;
+    background-size: 100%;
 }
 
 /* Set padding to keep content from hitting the edges */
-.body-content {
+/*.body-content {
     padding-left: 15px;
     padding-right: 15px;
-}
+}*/
 
 /* Override the default bootstrap behavior where horizontal description lists 
    will truncate terms that are too long to fit in the left column 
@@ -20,11 +23,9 @@
 input,
 select,
 textarea {
-    max-width: 280px;
+    max-width: 100%;
 }
-body {
-    background: #F1F3FA;
-}
+
 
 /* Profile container */
 .profile {

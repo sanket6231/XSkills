@@ -1,0 +1,53 @@
+﻿@model XSkills.User_Profile
+
+@using (Html.BeginForm())
+{
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Wave)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Wave)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Skills)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Skills)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Trainings)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Trainings)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Certifications)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Certifications)
+        </dd>
+
+    </dl>
+    <div class="form-group">
+        <label for="comment">Want to ask any quetion?</label>
+        <textarea name="comment" class="form-control" rows="3"></textarea>
+    </div>
+    <button type="submit" class="btn btn-default">Send</button>
+}
+

@@ -1,12 +1,12 @@
 ﻿@model XSkills.User_Profile
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "MyProfile";
 }
 
-<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+@*<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>*@
 <link href="~/Content/Site.css" rel="stylesheet" />
 <style type="text/css">
 
@@ -18,7 +18,7 @@
 <div class="container">
     <div class="row profile">
         <div class="col-md-3">
-            @{Html.RenderAction("LoginHome", "Home");}
+            @{Html.RenderAction("LoginHome", "Home", new { pagename = "MyProfile" });}
         </div>
         <div class="col-md-9">
             <div class="profile-content" id="MainContent">

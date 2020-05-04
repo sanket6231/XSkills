@@ -1,0 +1,88 @@
+﻿@model  XSkills.Models.TeamMembersModel
+@{
+    ViewBag.Title = "Team Members";
+    WebGrid webGrid = new WebGrid(source: Model.Members, canSort: false, canPage: false);
+}
+
+<link href="~/Content/posts.css" rel="stylesheet" />
+<style type="text/css">
+
+    img {
+        height: 150px;
+        width: 150px;
+    }
+</style>
+<div class="container">
+    <div class="row profile">
+        <div class="col-md-3">
+            @{Html.RenderAction("LoginHome", "Home", new { pagename="Team Members" });}
+        </div>
+        <div class="col-md-9">
+            <div class="profile-content" id="MainContent">
+                <div class="container col-md-12" style="height: 70vh;overflow-x: scroll; overflow-y: scroll;">
+                    @using (Html.BeginForm("Index", "TeamMembers", FormMethod.Post, new { @Id = "WebGridForm" }))
+                    {
+                        @Html.DropDownList("Skills", Model.Skills, "All", new { @id = "ddlSkills" })
+                    }
+                    <hr />
+                    @webGrid.GetHtml(
+                        tableStyle: "table table-bordered",
+                        headerStyle: "webgrid-Header",
+                        alternatingRowStyle: "webgrid-alt",
+                        selectedRowStyle: "webgrid-selected",
+                        rowStyle: "webgrid-rowstyle",
+                        htmlAttributes: new { @id = "WebGrid", @class = "Grid" },
+                        columns: webGrid.Columns(
+                                 webGrid.Column("Name", "Name"),
+                                 webGrid.Column("Wave", "Wave"),
+                                 webGrid.Column("Skills", "Skills"),
+                                 webGrid.Column("", "", format: @<text><a href="javascript:;" class="details">View Details</a></text>))
+)
+                    <div id="dialog" style="display: none">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.9/jquery-ui.js"></script>
+<link rel="stylesheet" type="text/css" href="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.9/themes/blitzer/jquery-ui.css" />
+<script type="text/javascript">
+    $("body").on("change", "#ddlSkills", function () {
+        $('#WebGridForm')[0].submit();
+    });
+    $("body").on("click", ".Grid tfoot a", function () {
+        $('#WebGridForm').attr('action', $(this).attr('href')).submit();
+        return false;
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#dialog").dialog({
+            autoOpen: false,
+            modal: true,
+            title: "View Details"
+        });
+        $("#WebGrid .details").click(function () {
+            var customerId = $(this).closest("tr").find("td").eq(0).html();
+            $.ajax({
+                type: "POST",
+                url: "/TeamMembers/Details",
+                data: '{name: "' + customerId + '" }',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                success: function (response) {
+                    $('#dialog').html(response);
+                    $('#dialog').dialog('open');
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>

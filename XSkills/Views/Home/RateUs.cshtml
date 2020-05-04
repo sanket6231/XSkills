@@ -1,13 +1,11 @@
 ﻿
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Rate Us";
 }
-
-<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
-<link href="~/Content/Site.css" rel="stylesheet" />
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.js"></script>
+@*<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">*@
+@*<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css">*@
+<script src="~/Content/Rating/dist/starrr.js"></script>
 <style type="text/css">
 
     img {
@@ -18,12 +16,70 @@
 <div class="container">
     <div class="row profile">
         <div class="col-md-3">
-            @{Html.RenderAction("LoginHome", "Home");}
+            @{Html.RenderAction("LoginHome", "Home", new { pagename = "Rate Us" });}
         </div>
         <div class="col-md-9">
             <div class="profile-content" id="MainContent">
-                Rate Us
+                <div class="container col-md-12">
+                    <div class="row">
+                        <h3>Rate Us!</h3>
+                    </div>
+                    <br />
+                    @using (Html.BeginForm("RateUs", "Home", FormMethod.Post, new { @Id = "WebGridForm" }))
+                    {
+                        <div class="row">
+                            <div class="col-md-12">
+                                @Html.Label("RateUs","We would love to hear your thoughts, comments or problems with anything so that we can improve!!",
+                               htmlAttributes: new { @class = "control-label col-md-10" })
+                            </div>
+                        </div>
+                        <hr />
+                        <br />
+                        <div class="row">
+                            @Html.Label("Rating", "Click to rate", htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <div class='starrr' id='star1'></div>
+                                <span class='your-choice-was' style='display: none;'>
+                                    Your rating was <span class='choice'></span>.
+                                </span>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            @Html.Label("Feedback", htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.TextArea("Feedback", new { htmlAttributes = new { @class = "form-control col-md-10", style= "width:100%" } })
+                                @Html.ValidationMessage("Feedback", "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <br />
+                        <br />
+                        <div class="row">
+                            <div class="col-md-2">
+
+                            </div>
+                            <div class="col-md-10">
+                                <input type="submit" value="Submit" class="btn btn-default" />
+                            </div>
+                        </div>
+                    }
+
+                </div>
+
             </div>
         </div>
     </div>
 </div>
+<script>
+    $('#star1').starrr({
+        change: function (e, value) {
+            if (value) {
+                $('.your-choice-was').show();
+                $('.choice').text(value);
+            } else {
+                $('.your-choice-was').hide();
+            }
+        }
+    });
+    
+</script>

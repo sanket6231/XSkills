@@ -1,13 +1,11 @@
 ﻿
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Knowledge Hub";
 }
 
-@*<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>*@
 <link href="~/Content/Site.css" rel="stylesheet" />
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+<link href="~/Content/posts.css" rel="stylesheet" />
 <style type="text/css">
 
     img {
@@ -18,12 +16,53 @@
 <div class="container">
     <div class="row profile">
         <div class="col-md-3">
-            @{Html.RenderAction("LoginHome", "Home");}
+            @{Html.RenderAction("LoginHome", "Home", new { pagename = "Knowledge Hub" });}
         </div>
         <div class="col-md-9">
             <div class="profile-content" id="MainContent">
-                Stay tunned for latest news and content..
+                
+                <div class="container col-md-12" style="height: 70vh;overflow-x: scroll; overflow-y: scroll;">
+                    <div class="row">
+                        <h3>Current Learnings:</h3>
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-12">
+                            <div class="widget-area no-padding blank">
+                                <div class="status-upload">
+                                    <form>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <textarea placeholder="What are you doing right now?" class="autoExpand forumPost form-control"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <ul>
+                                                    <li><a title="" data-toggle="tooltip" data-placement="bottom" data-original-title="Audio"><i class="fa fa-microphone"></i></a></li>
+                                                    <li><a title="" data-toggle="tooltip" data-placement="bottom" data-original-title="Video"><i class="fa fa-video-camera"></i></a></li>
+                                                    <li><a title="" data-toggle="tooltip" data-placement="bottom" data-original-title="Attachment"><i class="fa fa-paperclip"></i></a></li>
+                                                    <li><a title="" data-toggle="tooltip" data-placement="bottom" data-original-title="Picture"><i class="fa fa-picture-o"></i></a></li>
+                                                </ul>
+                                                <button type="submit" class="btn btn-success green"><i class="fa fa-share"></i> Share</button>
+                                            </div>
+                                        </div>
+                                        
+                                    </form>
+                                </div><!-- Status Upload  -->
+                            </div><!-- Widget Area -->
+                        </div>
+
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function () {
+        
+        $("[data-toggle=tooltip]").tooltip();
+    });
+</script>
