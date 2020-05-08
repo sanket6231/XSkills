@@ -1,0 +1,78 @@
+﻿@model XSkills.Models.PostsViewModel
+
+@using (Html.BeginForm("Index", "KnowledgeHub", FormMethod.Post, new { @Id = "FilterForm" }))
+{
+    <div class="row">
+        <div class="col-md-3">
+            <h5 class="text-right">Posted by: </h5>
+        </div>
+        <div class="col-md-9">
+            <select name="PostedBy" id="ddl_user_filter" class="form-control"></select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <h5 class="text-right">Section: </h5>
+        </div>
+        <div class="col-md-9">
+            <select name="Section_Type" id="ddl_sectiontype_filter" class="form-control">
+                <option value="">All</option>
+                <option value="Technical">Technical</option>
+                <option value="personal">personal</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <h5 class="text-right">Skills: </h5>
+        </div>
+        <div class="col-md-9">
+            <select name="Skills" id="ddl_skills_filter" class="form-control">
+                <option value="">All</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <input type="submit" id="btn-filtersubmit" value="Submit" class="btn btn-default" />
+        </div>
+    </div>
+}
+
+<script>
+    $('#ddl_sectiontype_filter').change(function () {
+        if ($(this).val() == "Technical") {
+            GetFilterItems("Skills")
+        } else {
+            GetFilterItems("PersonalSkills")
+        }
+
+    });
+    function GetFilterItems(category) {
+        $.ajax({
+            url: '@Url.Action("Getitems", "KnowledgeHub")',
+            type: "Post",
+            data: { category: category},
+            success: function (data) {
+                $('#ddl_skills_filter options').remove();
+                if (!('error' in data)) {
+                    $('#ddl_skills_filter').append(new Option("All", ""));
+                    for (var i = 0; i < data.length; i++) {
+                        var opt = new Option(data[i].Text, data[i].Value);
+                        $('#ddl_skills_filter').append(opt);
+
+                    }
+                }
+
+            }
+
+        });
+    }
+
+    $(document).ready(function () {
+        if ($('#ddl_user_filter > option').length == 0) {
+
+        }
+
+    });
+</script>

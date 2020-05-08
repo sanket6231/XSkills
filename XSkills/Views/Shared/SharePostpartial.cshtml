@@ -1,0 +1,140 @@
+﻿@model XSkills.Models.PostsModel
+<script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
+<style>
+    form .error {
+        color: #ff0000;
+    }
+</style>
+
+@using (Ajax.BeginForm("SharePostSubmit", "KnowledgeHub",
+    new AjaxOptions { HttpMethod = "POST", UpdateTargetId= "MainContent", OnSuccess = "onSuccess" },
+    new { name = "NewPost", enctype = "multipart/form-data" }))
+{
+    <div id="error">
+
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            @Html.TextAreaFor(model => model.Message,
+           new { @placeholder = "What are you doing right now?", @class = "autoExpand forumPost form-control" } )
+            @Html.ValidationMessageFor(m => m.Message, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="row" id="div_attachment">
+        <div class="col-md-12">
+            <ul id="ul_attachednames"></ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <ul>
+                <li>
+                    <a title="Audio" data-toggle="tooltip" data-placement="bottom" data-original-title="Audio" id="a_attachedaudio">
+                        <i class="fa fa-microphone"></i>
+                        <input type="file" accept="audio/*" name="attachedaudio" id="attachedaudio" style="display:none;" />
+                    </a>
+                </li>
+                <li>
+                    <a title="Video" data-toggle="tooltip" data-placement="bottom" data-original-title="Video" id="a_attachedvideos">
+                        <i class="fa fa-video-camera"></i>
+                        <input type="file" name="attachedvideos" id="attachedvideos" accept="video/*" style="display:none;" />
+                    </a>
+                </li>
+                <li>
+                    <a title="Attachment" data-toggle="tooltip" data-placement="bottom" data-original-title="Attachment" id="a_attachedfile">
+                        <i class="fa fa-paperclip"></i>
+                    </a>
+                    <input type="file" name="attachedfile" id="attachedfile" style="display:none;" />
+                </li>
+                <li>
+                    <a title="Picture" data-toggle="tooltip" data-placement="bottom" data-original-title="Picture" id="a_attachedimages">
+                        <i class="fa fa-picture-o"></i>
+                    </a>
+                    <input type="file" name="attachedimages" id="attachedimages" accept="image/*" style="display:none;" />
+                </li>
+                <li>
+                    <div>
+                        @Html.RadioButtonFor(model => model.Section_Type, "Technical") Technical
+                        @Html.RadioButtonFor(model => model.Section_Type, "Personal") Personal
+                        @Html.ValidationMessageFor(m => m.Section_Type, "", new { @class = "text-danger" })
+                    </div>
+                </li>
+                <li>
+                    <select name="Skills" id="ddl_skills" style="display:none">
+                        
+                    </select>
+                </li>
+                @*<li id="li_technical">
+                    Skills @Html.DropDownListFor(model => model.Skills, (IEnumerable<SelectListItem>)ViewBag.items, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(m => m.Skills, "", new { @class = "text-danger", @name="Skills" })
+                </li>
+                <li id="li_personal" style="display:none">
+                    Skills @Html.DropDownListFor(model => model.Skills, (IEnumerable<SelectListItem>)ViewBag.PersonalSkills, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(m => m.Skills, "", new { @class = "text-danger",@name = "Skills" })
+                </li>*@
+            </ul>
+            <button type="submit" class="btn btn-success green"><i class="fa fa-share"></i> Share</button>
+        </div>
+
+    </div>
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+<script>
+    var onSuccess = function (result) {
+        if (result.response) {
+            $('#error').html(result.response);
+        } else {
+            //window.location = 
+        }
+    }
+    $('#a_attachedaudio').click(function () {
+        $('#attachedaudio').trigger('click');
+    });
+    $('#a_attachedvideos').click(function () {
+        $('#attachedvideos').trigger('click');
+    });
+    $('#a_attachedfile').click(function () {
+        $('#attachedfile').trigger('click');
+    });
+    $('#a_attachedimages').click(function () {
+        $('#attachedimages').trigger('click');
+    });
+    $('input[type="file"]').change(function (e) {
+        var fileName = e.target.files[0].name;
+        $('#ul_attachednames').append('<li>' + fileName + '<li>');
+    });
+
+
+    $('input[type=radio][name="Section_Type"]').change(function () {
+        $('#ddl_skills').show();
+        if ($(this).val() == "Technical") {
+            GetItems("Skills")
+        } else {
+            GetItems("PersonalSkills")
+        }
+        
+    });
+    
+    function GetItems(category) {
+        $.ajax({
+            url: '@Url.Action("Getitems", "KnowledgeHub")',
+            type: "Post",
+            data: { category: category},
+            success: function (data) {
+                $('#ddl_skills options').remove();
+                if (!('error' in data)) {
+                    $('#ddl_skills').append(new Option("-- Select Skill --", ""));
+                    for (var i = 0; i < data.length; i++) {
+                        var opt = new Option(data[i].Text, data[i].Value);
+                        $('#ddl_skills').append(opt);
+
+                    }
+                }
+                
+            }
+
+        });
+    }
+</script>

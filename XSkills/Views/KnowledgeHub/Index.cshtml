@@ -1,4 +1,4 @@
-﻿
+﻿@model List<XSkills.sp_FilterPosts_Result>
 @{
     ViewBag.Title = "Knowledge Hub";
 }
@@ -12,57 +12,331 @@
         height: 150px;
         width: 150px;
     }
+
+    .fa_custom {
+        color: #0099CC
+    }
 </style>
-<div class="container">
+
+<div class="container" id="MainContent" >
     <div class="row profile">
         <div class="col-md-3">
             @{Html.RenderAction("LoginHome", "Home", new { pagename = "Knowledge Hub" });}
         </div>
         <div class="col-md-9">
-            <div class="profile-content" id="MainContent">
-                
-                <div class="container col-md-12" style="height: 70vh;overflow-x: scroll; overflow-y: scroll;">
-                    <div class="row">
-                        <h3>Current Learnings:</h3>
-                    </div>
+            <div class="profile-content" style="height: 75vh;overflow-x: auto; overflow-y: scroll;">
 
-                    <div class="row">
+                <div class="container col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <h4 class="card-title">Current Learnings:</h4>
+                                </div>
+                                <div class="col-md-2">
+                                    <h5 class="text-right">Filter by: </h5>
+                                </div>
+                                <div class="col-md-1">
+                                    <button class="btn btn-default" id="btn_filter">
+                                        <i class="fa fa-filter 2x" aria-hidden="true"></i>
+                                    </button>
 
-                        <div class="col-md-12">
-                            <div class="widget-area no-padding blank">
-                                <div class="status-upload">
-                                    <form>
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <textarea placeholder="What are you doing right now?" class="autoExpand forumPost form-control"></textarea>
-                                            </div>
+                                </div>
+                                <div class="row">
+
+                                    <div class="col-md-12">
+                                        <div class="status-upload" id="statusUpload">
+                                            @{Html.RenderAction("SharePost", "KnowledgeHub", new { pagename = "Knowledge Hub" });}
+
                                         </div>
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <ul>
-                                                    <li><a title="" data-toggle="tooltip" data-placement="bottom" data-original-title="Audio"><i class="fa fa-microphone"></i></a></li>
-                                                    <li><a title="" data-toggle="tooltip" data-placement="bottom" data-original-title="Video"><i class="fa fa-video-camera"></i></a></li>
-                                                    <li><a title="" data-toggle="tooltip" data-placement="bottom" data-original-title="Attachment"><i class="fa fa-paperclip"></i></a></li>
-                                                    <li><a title="" data-toggle="tooltip" data-placement="bottom" data-original-title="Picture"><i class="fa fa-picture-o"></i></a></li>
-                                                </ul>
-                                                <button type="submit" class="btn btn-success green"><i class="fa fa-share"></i> Share</button>
-                                            </div>
-                                        </div>
-                                        
-                                    </form>
-                                </div><!-- Status Upload  -->
-                            </div><!-- Widget Area -->
+                                    </div>
+
+                                </div>
+                            </div>
                         </div>
+                        <br />
+                        <br />
+                        <div class="row">
+                            @foreach (var item in Model)
+                            {
+                                <div class="card border-secondary mb-3">
+                                    <div class="card-header">
+                                        <div class="row">
+                                            <div class="col-md-1">
+                                                <img src="~/UploadedFiles/Images/xskill_logo.jpg" style="height:40px;width:40px;border-radius:50%;" />
+                                            </div>
+                                            <div class="col-md-8">
+                                                <h5 class="card-title"><b>@Html.DisplayFor(modelItem => item.UserName)</b></h5>
+                                                <p class="card-text">
+                                                    <small class="text-muted">
+                                                        @Html.DisplayFor(modelItem => item.CreatedDate)
+                                                    </small>
+                                                </p>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <p><small><b>Tags:</b>@Html.DisplayFor(modelItem => item.Section_Type), @Html.DisplayFor(modelItem => item.Skills)</small></p>
+                                            </div>
+                                        </div>
 
+
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <p class="card-text">@Html.DisplayFor(modelItem => item.Message)</p>
+                                                <br />
+                                                @if (item.Attachment == "Y")
+                                                {
+                                                    <img class="class=" card-img-bottom"" src="@item.Attachment_URL" alt="Uploaded File" />
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <br />
+                                        <div class="row">
+                                            <div class="col-md-1">
+                                                <div class="thumbnail">
+                                                    <img src="~/UploadedFiles/Images/xskill_logo.jpg" style="height:30px;width:30px;border-radius:50%;" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-11">
+                                                <div class="row">
+                                                    <div class="col-md-11">
+                                                        <input type="text" cols="15" id="commentInput-@item.Pk_id" class="form-control commentInput" placeholder="Add a comment.." />
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <a id="addNewCommentBtn-@item.Pk_id" class="addNewCommentBtn" href="#"><i class="fa fa-send fa_custom fa-2x"></i></a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <a class="btn-link" data-toggle="collapse" href="#collapseExample-@item.Pk_id" role="button" aria-expanded="false" aria-controls="collapseExample-@item.Pk_id">
+                                                            See All Comments
+                                                        </a>
+                                                    </div>
+                                                    <div class="panel-body comment-action">
+                                                        <div class="collapse" id="collapseExample-@item.Pk_id">
+                                                            <div class="card card-body">
+                                                                @Html.Action("CommentPartial", new { postid = item.Pk_id })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<script>
-    $(document).ready(function () {
-        
-        $("[data-toggle=tooltip]").tooltip();
+
+    <div id="dialog" style="display: none">
+        @{Html.RenderPartial("FilterPost_popup", new XSkills.Models.PostsViewModel());}
+    </div>
+
+    <script id="comment-template" type="text/x-handlebars-template">
+        <li class="comment" data-id="{{commentId}}">
+            <div class="row">
+                <div class="col-md-1">
+                    <div class="avatar">
+                        <a href="javascript:void(0);">
+                            <img src="/UploadedFiles/Images/xskill_logo.jpg" style="height:30px;width:30px;border-radius:50%;" />
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-11">
+                    <div class="comment-body">
+                        <header>
+                            <a href="javascript:void(0);" class="userlink">{{username}}</a> - <span class="pubdate">
+                                posted {{strCommentDate}}
+                            </span>
+                        </header>
+                        <p>
+                            {{commentText}}
+                        </p>
+                        <footer>
+                            <a class="reply-link" href="{{commentId}}">Reply</a>
+                        </footer>
+                    </div>
+                </div>
+            </div>
+        </li>
+    </script>
+
+    <script id="reply-template" type="text/template">
+        <div style="padding-top:10px" class="row reply-form">
+            <div class="row">
+                <div class="col-md-1">
+                    <div class="avatar">
+                        <img src="/UploadedFiles/Images/xskill_logo.jpg" style="height:30px;width:30px;border-radius:50%;" />
+                    </div>
+                </div>
+                <div class="col-md-11">
+                    <div class="row">
+                        <div class="col-md-11">
+                            <input type="text" cols="15" id="replyInput" class="form-control" placeholder="Add a reply.." />
+                        </div>
+                        <div class="col-md-1">
+                            <a class="addReplyBtn" href="#"><i class="fa fa-send fa_custom fa-2x"></i></a>
+                            <input type="hidden" name="hidParentId" id="hidParentId" class="hidParentId" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    @section scripts{
+        <script src="~/Scripts/handlebars-v4.0.12.js"></script>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+        <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.9/jquery-ui.js"></script>
+        <link rel="stylesheet" type="text/css" href="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.9/themes/blitzer/jquery-ui.css" />
+        <script>
+
+        function addNewComment(data) {
+            return $.ajax({
+                type: "POST",
+                url: '@Url.Action("addNewComment", "KnowledgeHub")',
+                data: data,
+                dataType: 'json',
+                contentType: 'application/json;charset=utf-8'
+            });
+        }
+
+
+
+    $(function () {
+
+        var source = document.getElementById("comment-template").innerHTML;
+        var template = Handlebars.compile(source);
+
+        $(".addNewCommentBtn").click(function (e) {
+            var id = $(this).attr('id').split('-');
+
+            e.preventDefault();
+            var data = JSON.stringify({
+                PostId: id[1],
+                parentId: 0,
+                commentText: $("#commentInput-" + id[1]).val()
+            });
+
+
+            $.when(addNewComment(data)).then(function (response) {
+                if (response.error == false) {
+                    var $commentHtml = template(response.result);
+                    $("#comments-" + id[1]).append($commentHtml);
+                    $("#commentInput-"+ id[1]).val('');
+                } else {
+                    console.log("An error has occured");
+                }
+            }).fail(function (err) {
+                console.log(err);
+            })
+        });
+
+
+        $(document).on("click", ".reply-link", function (e) {
+            e.preventDefault();
+            var $self = $(this);
+            var $commentListItem = $self.parents(".comment-body");
+            var replySource = document.getElementById("reply-template").innerHTML;
+            var postid = $self.parents('.CommentSection').attr('id').split('-')[2];
+            var commentid = $self.closest('div[data-id]').data('id');
+            replySource = replySource.replace('replyInput', 'replyInput-' + postid);
+            replySource = replySource.replace('id="hidParentId"', 'id="hidParentId-' + postid + '"');
+            $commentListItem.after(replySource);
+
+            $(document).find("#hidParentId-"+postid).val($self.attr("href"));
+
+        });
+
+
+
+        $(document).on("click", ".addReplyBtn", function (e) {
+            e.preventDefault();
+            var $self = $(this);
+            var postid = $self.parent('div').find(".hidParentId").attr('id').split('-')[1];
+            var $replyInput = $(document).find("#replyInput-"+postid);
+            var parentId = $(document).find("#hidParentId-"+postid).val();
+            var $repliesUL = $(document).find("ul[data-parentid='" + parentId + "']");
+            var $commentBody = $(document).find("[data-id='" + parentId + "']");
+            var replyULCount = $repliesUL.length;
+
+
+
+            var data = JSON.stringify({
+                PostId: postid,
+                parentId: parentId,
+                commentText: $replyInput.val()
+            });
+
+            $.when(addNewComment(data)).then(function (response) {
+                if (response.error == false) {
+                    var commentHtml = template(response.result);
+
+                    if (replyULCount > 0) {
+
+                        $repliesUL.append(commentHtml);
+                    } else {
+                        $commentBody.append("<ul data-parentid='" + parentId + "' class='replies'>" + commentHtml + "</ul>");
+
+                    }
+
+                    $(document).find(".reply-form").remove();
+
+                } else {
+                    console.log("An error has occured");
+                }
+            }).fail(function (err) {
+                console.log(err);
+            })
+
+        });
+
+
+
     });
-</script>
+        </script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $('#btn_filter').click(function () {
+                    $("#dialog").dialog('open');
+                    $.ajax({
+                        url: '@Url.Action("GetUsers", "KnowledgeHub")',
+                        type: "Post",
+                        success: function (data) {
+                            $('#ddl_user_filter options').remove();
+                            if (!('error' in data)) {
+                                $('#ddl_user_filter').append(new Option("All", ""));
+                                for (var i = 0; i < data.length; i++) {
+                                    var opt = new Option(data[i], data[i]);
+                                    $('#ddl_user_filter').append(opt);
+
+                                }
+                            }
+
+                        }
+
+                    });
+                });
+                $("#dialog").dialog({
+                    autoOpen: false,
+                    modal: true,
+                    width: 500,
+                    draggable: false,
+                    title: "Filters"
+                });
+            });
+            
+        </script>
+
+    }

@@ -12,6 +12,8 @@ namespace XSkills
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
+    using System.Data.Entity.Core.Objects;
+    using System.Linq;
     
     public partial class XSkillsEntities1 : DbContext
     {
@@ -26,5 +28,42 @@ namespace XSkills
         }
     
         public virtual DbSet<User_Profile> User_Profile { get; set; }
+        public virtual DbSet<Comment> Comments { get; set; }
+        public virtual DbSet<Post> Posts { get; set; }
+        public virtual DbSet<ParaMaster> ParaMasters { get; set; }
+    
+        public virtual ObjectResult<FilterPosts_Result> FilterPosts(string postedBy, string sectionType, string skills)
+        {
+            var postedByParameter = postedBy != null ?
+                new ObjectParameter("PostedBy", postedBy) :
+                new ObjectParameter("PostedBy", typeof(string));
+    
+            var sectionTypeParameter = sectionType != null ?
+                new ObjectParameter("SectionType", sectionType) :
+                new ObjectParameter("SectionType", typeof(string));
+    
+            var skillsParameter = skills != null ?
+                new ObjectParameter("Skills", skills) :
+                new ObjectParameter("Skills", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<FilterPosts_Result>("FilterPosts", postedByParameter, sectionTypeParameter, skillsParameter);
+        }
+    
+        public virtual ObjectResult<sp_FilterPosts_Result> sp_FilterPosts(string postedBy, string sectionType, string skills)
+        {
+            var postedByParameter = postedBy != null ?
+                new ObjectParameter("PostedBy", postedBy) :
+                new ObjectParameter("PostedBy", typeof(string));
+    
+            var sectionTypeParameter = sectionType != null ?
+                new ObjectParameter("SectionType", sectionType) :
+                new ObjectParameter("SectionType", typeof(string));
+    
+            var skillsParameter = skills != null ?
+                new ObjectParameter("Skills", skills) :
+                new ObjectParameter("Skills", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<sp_FilterPosts_Result>("sp_FilterPosts", postedByParameter, sectionTypeParameter, skillsParameter);
+        }
     }
 }

@@ -16,6 +16,9 @@
             background-image: -webkit-gradient(linear, left top, left bottom, from(#3c3c3c), to(ghostwhite));
             background-image: linear-gradient(to bottom, #3c3c3c 0%, ghostwhite 100%);*/
         }
+            .navbar-inverse .navbar-nav > li > a {
+                font-size:16px;
+            }
     </style>
 </head>
 <body>
@@ -29,9 +32,9 @@
                     <span class="icon-bar"></span>
                 </button>
                 <div class="navbar-brand" style="display:inline">
-                    <img src="~/UploadedFiles/Images/IMG-20200429-WA0002.jpg" style="height:40px;width:40px;border-radius:50%;margin-top:-10px" />
+                    <img src="~/UploadedFiles/Images/xskill_logo.jpg" style="height:40px;width:40px;border-radius:50%;margin-top:-10px" />
                 </div>
-                @Html.ActionLink("X - Skills", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                @Html.ActionLink("CrossSkill", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
 
             </div>
             <div class="navbar-collapse collapse">

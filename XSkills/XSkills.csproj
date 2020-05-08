@@ -169,12 +169,18 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Comment.cs">
+      <DependentUpon>XSkillsEntity.tt</DependentUpon>
+    </Compile>
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\KnowledgeHubController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ScratchPadController.cs" />
     <Compile Include="Controllers\TeamMembersController.cs" />
+    <Compile Include="FilterPosts_Result.cs">
+      <DependentUpon>XSkillsEntity.tt</DependentUpon>
+    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -188,12 +194,25 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\commentDTO.cs" />
     <Compile Include="Models\CustomIdentity.cs" />
     <Compile Include="Models\EditProfileModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\PostsDbContext.cs" />
+    <Compile Include="Models\PostsModel.cs" />
+    <Compile Include="Models\PostsViewModel.cs" />
     <Compile Include="Models\TeamMembersModel.cs" />
+    <Compile Include="ParaMaster.cs">
+      <DependentUpon>XSkillsEntity.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Post.cs">
+      <DependentUpon>XSkillsEntity.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="sp_FilterPosts_Result.cs">
+      <DependentUpon>XSkillsEntity.tt</DependentUpon>
+    </Compile>
     <Compile Include="Startup.cs" />
     <Compile Include="User_Profile.cs">
       <DependentUpon>XSkillsEntity.tt</DependentUpon>
@@ -223,8 +242,10 @@
     <Content Include="Content\posts.css" />
     <Content Include="Content\Rating\dist\starrr.css" />
     <Content Include="Content\Rating\dist\starrr.js" />
+    <Content Include="Scripts\handlebars-v4.0.12.js" />
     <Content Include="Scripts\jquery-ui.js" />
     <Content Include="Scripts\jquery-ui.min.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="UploadedFiles\Images\4e0f683f152c1e201daacd7e6bf6d9b8.png" />
     <Content Include="UploadedFiles\Images\IMG-20200429-WA0002.jpg" />
     <Content Include="UploadedFiles\Images\profiles\User-blue-icon.png" />
@@ -234,6 +255,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="UploadedFiles\Images\xskill_logo.jpg" />
     <Content Include="XSkillsEntity.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>XSkillsEntity.edmx</DependentUpon>
@@ -307,6 +329,9 @@
     <Content Include="Views\TeamMembers\Index.cshtml" />
     <Content Include="Views\Shared\ProfileDetails_popup.cshtml" />
     <Content Include="Views\ScratchPad\Index.cshtml" />
+    <Content Include="Views\Shared\SharePostpartial.cshtml" />
+    <Content Include="Views\Shared\_CommentPartial.cshtml" />
+    <Content Include="Views\Shared\FilterPost_popup.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

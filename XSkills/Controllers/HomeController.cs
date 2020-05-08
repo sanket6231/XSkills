@@ -67,7 +67,7 @@ namespace XSkills.Controllers
         [Authorize]
         public ActionResult EditProfile(User_Profile model, HttpPostedFileBase postedFile)
         {
-            string username = (string)TempData["UserName"];
+            //string username = (string)TempData["UserName"];
             if (postedFile != null)
             {
                 string fileName = Path.GetFileName(postedFile.FileName);

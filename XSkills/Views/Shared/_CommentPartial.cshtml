@@ -1,0 +1,59 @@
+﻿@model IEnumerable<XSkills.Comment>
+
+@helper RenderComment(IEnumerable<XSkills.Comment> comments)
+{
+    foreach (var comment in comments)
+    {
+
+        <li class="comment" data-id="@comment.CommentID">
+            <div class="row">
+                <div class="col-md-1">
+                    <div class="avatar">
+                        <a href="javascript:void(0);">
+                            <img src="~/UploadedFiles/Images/xskill_logo.jpg" style="height:30px;width:30px;border-radius:50%;" />
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-11">
+                    <div data-id="@comment.CommentID" class="comment-body">
+                        <header><a href="javascript:void(0);" class="userlink">@comment.Username</a> - <span class="pubdate">posted @comment.CommentDate.ToString("dd-MM-yyyy")</span></header>
+                        <p>
+                            @comment.CommentText
+                        </p>
+                        <footer>
+                            <a class="reply-link" href="@comment.CommentID">Reply</a>
+                        </footer>
+                    </div>
+                </div>
+            </div>
+    
+    
+
+            @{
+                var children = Model.Where(x => x.ParentId == comment.CommentID).ToList();
+                if (children.Count() > 0)
+                {
+                    <ul data-parentid="@comment.CommentID" class="replies">
+                        @RenderComment(children)
+                    </ul>
+                }
+            }
+
+        </li>
+
+    }
+
+}
+
+<div id="comment-section-@ViewBag.PostId" class="row CommentSection">
+    <div class="col-sm-7">
+        <ul class="comments" id="comments-@ViewBag.PostId">
+            @RenderComment(Model.Where(x => x.ParentId == 0))
+        </ul>
+    </div>
+
+</div>
+
+
+
+
