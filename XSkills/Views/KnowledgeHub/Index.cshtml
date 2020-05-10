@@ -1,4 +1,4 @@
-﻿@model List<XSkills.sp_FilterPosts_Result>
+﻿@model List<XSkills.sp_Filter_Posts_Result>
 @{
     ViewBag.Title = "Knowledge Hub";
 }
@@ -63,7 +63,14 @@
                                     <div class="card-header">
                                         <div class="row">
                                             <div class="col-md-1">
-                                                <img src="~/UploadedFiles/Images/xskill_logo.jpg" style="height:40px;width:40px;border-radius:50%;" />
+                                                @if (item.ImgUrl != null)
+                                                {
+                                                    <img src="@Url.Content(item.ImgUrl)" style="height:40px;width:40px;border-radius:50%;" alt="Profile">
+                                                }
+                                                else
+                                                {
+                                                    <img src="~/UploadedFiles/Images/profiles/User-blue-icon.png" style="height:40px;width:40px;border-radius:50%;" alt="Profile">
+                                                }
                                             </div>
                                             <div class="col-md-8">
                                                 <h5 class="card-title"><b>@Html.DisplayFor(modelItem => item.UserName)</b></h5>
@@ -87,7 +94,34 @@
                                                 <br />
                                                 @if (item.Attachment == "Y")
                                                 {
-                                                    <img class="class=" card-img-bottom"" src="@item.Attachment_URL" alt="Uploaded File" />
+                                                    if (item.Attachment_Type.Contains("images"))
+                                                    {
+                                                        <img class="class=" card-img-bottom"" src="@item.Attachment_URL" alt="Uploaded File" />
+                                                    }
+                                                    else if (item.Attachment_Type.Contains("video"))
+                                                    {
+                                                        <video style="width:100%; height:auto;" controls>
+                                                            <source src="@Url.Content(@item.Attachment_URL)" type="@item.Attachment_Type" />
+                                                        </video>
+                                                    }
+                                                    else if (item.Attachment_Type.Contains("audio"))
+                                                    {
+                                                        <audio style="width:100%; height:auto;" controls>
+                                                            <source src="@Url.Content(@item.Attachment_URL)" type="@item.Attachment_Type">
+                                                        </audio>
+                                                    }
+                                                    else
+                                                    {
+                                                        string filename = Path.GetFileName(item.Attachment_URL); 
+                                                        <div class="row border">
+                                                            <div class="col-md-5">@filename</div>
+                                                            <div class="col-md-5">
+                                                                <a href="@Url.Action("Download", new { fileurl = item.Attachment_URL })" class="btn btn-danger">
+                                                                    <i class="fa fa-download" aria-hidden="true"></i>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    }
                                                 }
                                             </div>
                                         </div>
@@ -96,7 +130,7 @@
                                         <div class="row">
                                             <div class="col-md-1">
                                                 <div class="thumbnail">
-                                                    <img src="~/UploadedFiles/Images/xskill_logo.jpg" style="height:30px;width:30px;border-radius:50%;" />
+                                                    <img class="profile_image" src="~/UploadedFiles/Images/profiles/User-blue-icon.png" style="height:30px;width:30px;border-radius:50%;" alt="Profile">
                                                 </div>
                                             </div>
                                             <div class="col-md-11">
@@ -149,7 +183,7 @@
                 <div class="col-md-1">
                     <div class="avatar">
                         <a href="javascript:void(0);">
-                            <img src="/UploadedFiles/Images/xskill_logo.jpg" style="height:30px;width:30px;border-radius:50%;" />
+                            <img src="{{ImgUrl}}" style="height:30px;width:30px;border-radius:50%;" />
                         </a>
                     </div>
                 </div>
@@ -177,19 +211,15 @@
             <div class="row">
                 <div class="col-md-1">
                     <div class="avatar">
-                        <img src="/UploadedFiles/Images/xskill_logo.jpg" style="height:30px;width:30px;border-radius:50%;" />
+                        <img class="profile_image" src="/UploadedFiles/Images/xskill_logo.jpg" style="height:30px;width:30px;border-radius:50%;" />
                     </div>
                 </div>
-                <div class="col-md-11">
-                    <div class="row">
-                        <div class="col-md-11">
-                            <input type="text" cols="15" id="replyInput" class="form-control" placeholder="Add a reply.." />
-                        </div>
-                        <div class="col-md-1">
-                            <a class="addReplyBtn" href="#"><i class="fa fa-send fa_custom fa-2x"></i></a>
-                            <input type="hidden" name="hidParentId" id="hidParentId" class="hidParentId" />
-                        </div>
-                    </div>
+                <div class="col-md-10">
+                    <input type="text" cols="15" id="replyInput" class="form-control" placeholder="Add a reply.." />
+                </div>
+                <div class="col-md-1 text-left">
+                    <a class="addReplyBtn" href="#"><i class="fa fa-send fa_custom fa-2x"></i></a>
+                    <input type="hidden" name="hidParentId" id="hidParentId" class="hidParentId" />
                 </div>
             </div>
         </div>
@@ -308,6 +338,10 @@
         </script>
         <script type="text/javascript">
             $(document).ready(function () {
+
+                var imgsrc = $('.profile-userpic img').attr('src');
+                $('.profile_image').attr('src',imgsrc);
+
                 $('#btn_filter').click(function () {
                     $("#dialog").dialog('open');
                     $.ajax({

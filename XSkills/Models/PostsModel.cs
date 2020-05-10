@@ -25,10 +25,10 @@ namespace XSkills.Models
         [Required(ErrorMessage = "Please select Skills")]
         public string Skills { get; set; }
 
-        public HttpPostedFileBase attachedaudio { get; set; }
-        public HttpPostedFileBase attachedvideos { get; set; }
-        public HttpPostedFileBase attachedfile { get; set; }
-        public HttpPostedFileBase attachedimages { get; set; }
+        public List<HttpPostedFileBase> attachedaudio { get; set; }
+        public List<HttpPostedFileBase> attachedvideos { get; set; }
+        public List<HttpPostedFileBase> attachedfile { get; set; }
+        public List<HttpPostedFileBase> attachedimages { get; set; }
     }
 
 }

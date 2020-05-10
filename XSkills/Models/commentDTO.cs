@@ -17,6 +17,7 @@ namespace XSkills.Models
     {
         public int commentId { get; set; }
         public DateTime commentDate { get; set; }
-        public string strCommentDate { get {; return this.commentDate.ToString("dd-MM-yyyy"); } }
+        public string strCommentDate { get {; return this.commentDate.ToString("dd-MM-yyyy HH:mm:ss"); } }
+        public string ImgUrl { get; set; }
     }
 }

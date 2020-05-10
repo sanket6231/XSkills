@@ -31,8 +31,9 @@ namespace XSkills
         public virtual DbSet<Comment> Comments { get; set; }
         public virtual DbSet<Post> Posts { get; set; }
         public virtual DbSet<ParaMaster> ParaMasters { get; set; }
+        public virtual DbSet<Rating> Ratings { get; set; }
     
-        public virtual ObjectResult<FilterPosts_Result> FilterPosts(string postedBy, string sectionType, string skills)
+        public virtual ObjectResult<sp_Filter_Posts_Result> sp_Filter_Posts(string postedBy, string sectionType, string skills)
         {
             var postedByParameter = postedBy != null ?
                 new ObjectParameter("PostedBy", postedBy) :
@@ -46,24 +47,20 @@ namespace XSkills
                 new ObjectParameter("Skills", skills) :
                 new ObjectParameter("Skills", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<FilterPosts_Result>("FilterPosts", postedByParameter, sectionTypeParameter, skillsParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<sp_Filter_Posts_Result>("sp_Filter_Posts", postedByParameter, sectionTypeParameter, skillsParameter);
         }
     
-        public virtual ObjectResult<sp_FilterPosts_Result> sp_FilterPosts(string postedBy, string sectionType, string skills)
+        public virtual ObjectResult<GetComments_Result> GetComments(Nullable<int> postID, Nullable<int> commentID)
         {
-            var postedByParameter = postedBy != null ?
-                new ObjectParameter("PostedBy", postedBy) :
-                new ObjectParameter("PostedBy", typeof(string));
+            var postIDParameter = postID.HasValue ?
+                new ObjectParameter("PostID", postID) :
+                new ObjectParameter("PostID", typeof(int));
     
-            var sectionTypeParameter = sectionType != null ?
-                new ObjectParameter("SectionType", sectionType) :
-                new ObjectParameter("SectionType", typeof(string));
+            var commentIDParameter = commentID.HasValue ?
+                new ObjectParameter("CommentID", commentID) :
+                new ObjectParameter("CommentID", typeof(int));
     
-            var skillsParameter = skills != null ?
-                new ObjectParameter("Skills", skills) :
-                new ObjectParameter("Skills", typeof(string));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<sp_FilterPosts_Result>("sp_FilterPosts", postedByParameter, sectionTypeParameter, skillsParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetComments_Result>("GetComments", postIDParameter, commentIDParameter);
         }
     }
 }

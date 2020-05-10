@@ -40,6 +40,16 @@
           <Property Name="CreatedDate" Type="datetime" />
           <Property Name="LastUpdatedDate" Type="datetime" />
           <Property Name="UserName" Type="varchar" MaxLength="50" />
+          <Property Name="Attachment_Type" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="Rating">
+          <Key>
+            <PropertyRef Name="Pk_id" />
+          </Key>
+          <Property Name="Pk_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Userid" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Rating" Type="int" Nullable="false" />
+          <Property Name="Feedback" Type="varchar(max)" Nullable="false" />
         </EntityType>
         <EntityType Name="User_Profile">
           <Key>
@@ -67,7 +77,11 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Function Name="sp_FilterPosts" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+        <Function Name="GetComments" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="PostID" Type="int" Mode="In" />
+          <Parameter Name="CommentID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sp_Filter_Posts" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="PostedBy" Type="varchar" Mode="In" />
           <Parameter Name="SectionType" Type="varchar" Mode="In" />
           <Parameter Name="Skills" Type="varchar" Mode="In" />
@@ -76,6 +90,7 @@
           <EntitySet Name="Comment" EntityType="Self.Comment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ParaMaster" EntityType="Self.ParaMaster" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Posts" EntityType="Self.Posts" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Rating" EntityType="Self.Rating" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User_Profile" EntityType="Self.User_Profile" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_dbo_Comment_dbo_Posts_Pk_id" Association="Self.FK_dbo_Comment_dbo_Posts_Pk_id">
             <End Role="Posts" EntitySet="Posts" />
@@ -95,15 +110,15 @@
             <End Role="Post" EntitySet="Posts" />
             <End Role="Comment" EntitySet="Comments" />
           </AssociationSet>
-          <FunctionImport Name="FilterPosts" ReturnType="Collection(XSkillsModel.FilterPosts_Result)">
+          <FunctionImport Name="sp_Filter_Posts" ReturnType="Collection(XSkillsModel.sp_Filter_Posts_Result)">
             <Parameter Name="PostedBy" Mode="In" Type="String" />
             <Parameter Name="SectionType" Mode="In" Type="String" />
             <Parameter Name="Skills" Mode="In" Type="String" />
           </FunctionImport>
-          <FunctionImport Name="sp_FilterPosts" ReturnType="Collection(XSkillsModel.sp_FilterPosts_Result)">
-            <Parameter Name="PostedBy" Mode="In" Type="String" />
-            <Parameter Name="SectionType" Mode="In" Type="String" />
-            <Parameter Name="Skills" Mode="In" Type="String" />
+          <EntitySet Name="Ratings" EntityType="XSkillsModel.Rating" />
+          <FunctionImport Name="GetComments" ReturnType="Collection(XSkillsModel.GetComments_Result)">
+          <Parameter Name="PostID" Mode="In" Type="Int32" />
+            <Parameter Name="CommentID" Mode="In" Type="Int32" />
           </FunctionImport>
         </EntityContainer>
         <EntityType Name="User_Profile">
@@ -145,6 +160,7 @@
           <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
           <Property Name="UserName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Comments" Relationship="XSkillsModel.FK_dbo_Comment_dbo_Posts_Pk_id" FromRole="Post" ToRole="Comment" />
+          <Property Name="Attachment_Type" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="ParaMaster">
           <Key>
@@ -194,6 +210,38 @@
           <Property Type="DateTime" Name="LastUpdatedDate" Nullable="true" Precision="23" />
           <Property Type="String" Name="UserName" Nullable="true" MaxLength="50" />
         </ComplexType>
+        <ComplexType Name="sp_Filter_Posts_Result">
+          <Property Type="String" Name="UserId" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="Section_Type" Nullable="false" MaxLength="10" />
+          <Property Type="String" Name="Message" Nullable="false" />
+          <Property Type="String" Name="Attachment" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="Attachment_URL" Nullable="true" />
+          <Property Type="String" Name="Skills" Nullable="true" MaxLength="50" />
+          <Property Type="DateTime" Name="CreatedDate" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="LastUpdatedDate" Nullable="true" Precision="23" />
+          <Property Type="String" Name="UserName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Attachment_Type" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="ImgUrl" Nullable="true" />
+          <Property Type="Int32" Name="Pk_id" Nullable="false" />
+        </ComplexType>
+        <EntityType Name="Rating">
+          <Key>
+            <PropertyRef Name="Pk_id" />
+          </Key>
+          <Property Name="Pk_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Userid" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Rating1" Type="Int32" Nullable="false" />
+          <Property Name="Feedback" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <ComplexType Name="GetComments_Result">
+          <Property Type="Int32" Name="CommentID" Nullable="false" />
+          <Property Type="Int32" Name="PostID" Nullable="false" />
+          <Property Type="String" Name="Username" Nullable="false" MaxLength="50" />
+          <Property Type="DateTime" Name="CommentDate" Nullable="false" Precision="23" />
+          <Property Type="Int32" Name="ParentId" Nullable="false" />
+          <Property Type="String" Name="ImgUrl" Nullable="true" />
+          <Property Type="String" Name="CommentText" Nullable="false" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -228,6 +276,7 @@
           <EntitySetMapping Name="Posts">
             <EntityTypeMapping TypeName="XSkillsModel.Post">
               <MappingFragment StoreEntitySet="Posts">
+                <ScalarProperty Name="Attachment_Type" ColumnName="Attachment_Type" />
                 <ScalarProperty Name="UserName" ColumnName="UserName" />
                 <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
@@ -252,10 +301,9 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="sp_FilterPosts" FunctionName="XSkillsModel.Store.sp_FilterPosts">
+          <FunctionImportMapping FunctionImportName="sp_Filter_Posts" FunctionName="XSkillsModel.Store.sp_Filter_Posts">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="XSkillsModel.sp_FilterPosts_Result">
-                <ScalarProperty Name="Pk_id" ColumnName="Pk_id" />
+              <ComplexTypeMapping TypeName="XSkillsModel.sp_Filter_Posts_Result">
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="Section_Type" ColumnName="Section_Type" />
                 <ScalarProperty Name="Message" ColumnName="Message" />
@@ -265,6 +313,32 @@
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
                 <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Attachment_Type" ColumnName="Attachment_Type" />
+                <ScalarProperty Name="ImgUrl" ColumnName="ImgUrl" />
+                <ScalarProperty Name="Pk_id" ColumnName="Pk_id" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="Ratings">
+            <EntityTypeMapping TypeName="XSkillsModel.Rating">
+              <MappingFragment StoreEntitySet="Rating">
+                <ScalarProperty Name="Feedback" ColumnName="Feedback" />
+                <ScalarProperty Name="Rating1" ColumnName="Rating" />
+                <ScalarProperty Name="Userid" ColumnName="Userid" />
+                <ScalarProperty Name="Pk_id" ColumnName="Pk_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetComments" FunctionName="XSkillsModel.Store.GetComments">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="XSkillsModel.GetComments_Result">
+                <ScalarProperty Name="CommentID" ColumnName="CommentID" />
+                <ScalarProperty Name="PostID" ColumnName="PostID" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="CommentDate" ColumnName="CommentDate" />
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="ImgUrl" ColumnName="ImgUrl" />
+                <ScalarProperty Name="CommentText" ColumnName="CommentText" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

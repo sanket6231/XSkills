@@ -19,7 +19,7 @@ namespace XSkills.Controllers
         {
             ViewBag.Title = "Knowledge Hub";
             
-            var model = context.sp_FilterPosts("All","All","All").OrderByDescending(x => x.CreatedDate).ToList();
+            var model = context.sp_Filter_Posts("All","All","All").OrderByDescending(x => x.CreatedDate).ToList();
 
             return View(model);
         }
@@ -28,7 +28,7 @@ namespace XSkills.Controllers
         public ActionResult Index(PostsViewModel filters)
         {
             //List<Post>
-            var model = context.sp_FilterPosts(filters.PostedBy,filters.Section_Type,filters.Skills).OrderByDescending(x => x.CreatedDate).ToList();
+            var model = context.sp_Filter_Posts(filters.PostedBy,filters.Section_Type,filters.Skills).OrderByDescending(x => x.CreatedDate).ToList();
             //foreach (var item in model) {
             //}
             //return RedirectToAction("Index", model);
@@ -62,63 +62,80 @@ namespace XSkills.Controllers
             }
             if (ModelState.IsValid)
             {
-                string isAttached = "N", attachment_url = "";
+                string isAttached = "N";
+                List<string> attachment_url = new List<string>();
+                List<string> attachement_type = new List<string>();
 
                 if (posts.attachedfile != null)
                 {
-                    string fileName = Path.GetFileName(posts.attachedfile.FileName);
-                    string path = Server.MapPath("~/UploadedFiles/");
-                    if (!Directory.Exists(path))
-                    {
-                        Directory.CreateDirectory(path);
+                    foreach (HttpPostedFileBase file in posts.attachedfile) {
+                        string fileName = Path.GetFileName(file.FileName);
+                        string path = Server.MapPath("~/UploadedFiles/");
+                        if (!Directory.Exists(path))
+                        {
+                            Directory.CreateDirectory(path);
+                        }
+
+                        file.SaveAs(path + fileName);
+
+                        isAttached = "Y";
+                        attachment_url.Add("\\UploadedFiles\\" + fileName);
+                        attachement_type.Add(file.ContentType);
                     }
-
-                    posts.attachedfile.SaveAs(path + fileName);
-
-                    isAttached = "Y";
-                    attachment_url = path + fileName;
                 }
                 if (posts.attachedaudio != null)
                 {
-                    string fileName = Path.GetFileName(posts.attachedaudio.FileName);
-                    string path = Server.MapPath("~/UploadedFiles/");
-                    if (!Directory.Exists(path))
+                    foreach (HttpPostedFileBase file in posts.attachedaudio)
                     {
-                        Directory.CreateDirectory(path);
+                        string fileName = Path.GetFileName(file.FileName);
+                        string path = Server.MapPath("~/UploadedFiles/");
+                        if (!Directory.Exists(path))
+                        {
+                            Directory.CreateDirectory(path);
+                        }
+
+                        file.SaveAs(path + fileName);
+
+                        isAttached = "Y";
+                        attachment_url.Add("\\UploadedFiles\\" + fileName);
+                        attachement_type.Add(file.ContentType);
                     }
-
-                    posts.attachedaudio.SaveAs(path + fileName);
-
-                    isAttached = "Y";
-                    attachment_url = path + fileName;
                 }
                 if (posts.attachedimages != null)
                 {
-                    string fileName = Path.GetFileName(posts.attachedimages.FileName);
-                    string path = Server.MapPath("~/UploadedFiles/");
-                    if (!Directory.Exists(path))
+                    foreach (HttpPostedFileBase file in posts.attachedimages)
                     {
-                        Directory.CreateDirectory(path);
+                        string fileName = Path.GetFileName(file.FileName);
+                        string path = Server.MapPath("~/UploadedFiles/");
+                        if (!Directory.Exists(path))
+                        {
+                            Directory.CreateDirectory(path);
+                        }
+
+                        file.SaveAs(path + fileName);
+
+                        isAttached = "Y";
+                        attachment_url.Add("\\UploadedFiles\\" + fileName);
+                        attachement_type.Add(file.ContentType);
                     }
-
-                    posts.attachedimages.SaveAs(path + fileName);
-
-                    isAttached = "Y";
-                    attachment_url = path + fileName;
                 }
-                if (posts.attachedimages != null)
+                if (posts.attachedvideos != null)
                 {
-                    string fileName = Path.GetFileName(posts.attachedimages.FileName);
-                    string path = Server.MapPath("~/UploadedFiles/");
-                    if (!Directory.Exists(path))
+                    foreach (HttpPostedFileBase file in posts.attachedvideos)
                     {
-                        Directory.CreateDirectory(path);
+                        string fileName = Path.GetFileName(file.FileName);
+                        string path = Server.MapPath("~/UploadedFiles/");
+                        if (!Directory.Exists(path))
+                        {
+                            Directory.CreateDirectory(path);
+                        }
+
+                        file.SaveAs(path + fileName);
+
+                        isAttached = "Y";
+                        attachment_url.Add("\\UploadedFiles\\" + fileName);
+                        attachement_type.Add(file.ContentType);
                     }
-
-                    posts.attachedimages.SaveAs(path + fileName);
-
-                    isAttached = "Y";
-                    attachment_url = path + fileName;
                 }
 
                 using (XSkillsEntities1 entities = new XSkillsEntities1())
@@ -129,7 +146,8 @@ namespace XSkills.Controllers
                         Section_Type = posts.Section_Type,
                         Message = posts.Message,
                         Attachment = isAttached,
-                        Attachment_URL = attachment_url,
+                        Attachment_URL = string.Join(";",attachment_url),
+                        Attachment_Type = string.Join(";", attachement_type),
                         Skills = posts.Skills,
                         CreatedDate = DateTime.Now,
                         UserName = username
@@ -137,8 +155,8 @@ namespace XSkills.Controllers
                     entities.Posts.Add(post);
                     entities.SaveChanges();
                 }
-                return RedirectToAction("Index");
-                //return Json(new { success = true, url = Url.Action("Index", "KnowledgeHub") });
+                //return RedirectToAction("Index");
+                return Json(new { success = true, url = Url.Action("Index", "KnowledgeHub") });
             }
             //return RedirectToAction("Index");
             ViewBag.Skills = Getitems("Skills");
@@ -149,7 +167,7 @@ namespace XSkills.Controllers
         public PartialViewResult CommentPartial(int postid)
         {
             //XSkillsEntities1 context = new XSkillsEntities1();
-            var comments = context.Comments.Where(x => x.PostID == postid).OrderBy(x => x.CommentDate);
+            var comments = context.GetComments(postID: postid, commentID: null).OrderBy(x => x.CommentDate).ToList();
             ViewBag.PostId = postid;
             return PartialView("_CommentPartial", comments);
         }
@@ -174,7 +192,7 @@ namespace XSkills.Controllers
 
                 context.Comments.Add(_comment);
                 context.SaveChanges();
-                var model = context.Comments.Where(x => x.CommentID == _comment.CommentID)
+                var model = context.GetComments(postID: null,commentID: _comment.CommentID)
                         .Select(x => new commentViewModel
                         {
                             PostId = x.PostID,
@@ -182,7 +200,8 @@ namespace XSkills.Controllers
                             commentText = x.CommentText,
                             parentId = x.ParentId,
                             commentDate = x.CommentDate,
-                            username = x.Username
+                            username = x.Username,
+                            ImgUrl = x.ImgUrl
 
                         }).FirstOrDefault();
                 
@@ -198,7 +217,12 @@ namespace XSkills.Controllers
             return Json(new { error = true }, JsonRequestBehavior.AllowGet);
         }
 
-
+        public FileResult Download(string fileurl)
+        {
+            byte[] fileBytes = System.IO.File.ReadAllBytes(Server.MapPath(fileurl));
+            string fileName = Path.GetFileName(fileurl);
+            return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
+        }
 
 
         //------------------------------------------------------------------

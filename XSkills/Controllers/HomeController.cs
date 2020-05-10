@@ -103,5 +103,27 @@ namespace XSkills.Controllers
             ViewBag.Title = "Rate Us";
             return View();
         }
+
+        [Authorize]
+        [HttpPost]
+        public ActionResult RateUs(RatingModel rating)
+        {
+            if (ModelState.IsValid)
+            {
+                using (XSkillsEntities1 entities = new XSkillsEntities1())
+                {
+                    Rating rate = new Rating()
+                    {
+                        Userid = User.Identity.Name,
+                        Rating1 = rating.RatingNo,
+                        Feedback = rating.Feedback
+                    };
+                    entities.Ratings.Add(rate);
+                    entities.SaveChanges();
+                }
+                
+            }
+            return View();
+        }
     }
 }

@@ -1,16 +1,16 @@
-﻿@model IEnumerable<XSkills.Comment>
+﻿@model List<XSkills.GetComments_Result>
 
-@helper RenderComment(IEnumerable<XSkills.Comment> comments)
+@helper RenderComment(List<XSkills.GetComments_Result> comments)
 {
-    foreach (var comment in comments)
-    {
-
+foreach (var comment in comments)
+{
+    comment.ImgUrl = comment.ImgUrl == null ? "/UploadedFiles/Images/profiles/User-blue-icon.png" : comment.ImgUrl;
         <li class="comment" data-id="@comment.CommentID">
             <div class="row">
                 <div class="col-md-1">
                     <div class="avatar">
                         <a href="javascript:void(0);">
-                            <img src="~/UploadedFiles/Images/xskill_logo.jpg" style="height:30px;width:30px;border-radius:50%;" />
+                            <img src="@comment.ImgUrl" style="height:30px;width:30px;border-radius:50%;" />
                         </a>
                     </div>
                 </div>
@@ -46,9 +46,9 @@
 }
 
 <div id="comment-section-@ViewBag.PostId" class="row CommentSection">
-    <div class="col-sm-7">
+    <div class="col-sm-12">
         <ul class="comments" id="comments-@ViewBag.PostId">
-            @RenderComment(Model.Where(x => x.ParentId == 0))
+            @RenderComment(Model.Where(x => x.ParentId == 0).ToList())
         </ul>
     </div>
 

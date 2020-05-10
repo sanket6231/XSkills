@@ -7,7 +7,7 @@
 </style>
 
 @using (Ajax.BeginForm("SharePostSubmit", "KnowledgeHub",
-    new AjaxOptions { HttpMethod = "POST", UpdateTargetId= "MainContent", OnSuccess = "onSuccess" },
+    new AjaxOptions { HttpMethod = "POST", OnSuccess = "onSuccess" },
     new { name = "NewPost", enctype = "multipart/form-data" }))
 {
     <div id="error">
@@ -31,26 +31,26 @@
                 <li>
                     <a title="Audio" data-toggle="tooltip" data-placement="bottom" data-original-title="Audio" id="a_attachedaudio">
                         <i class="fa fa-microphone"></i>
-                        <input type="file" accept="audio/*" name="attachedaudio" id="attachedaudio" style="display:none;" />
+                        <input type="file" accept="audio/*" name="attachedaudio" id="attachedaudio" style="display:none;" multiple/>
                     </a>
                 </li>
                 <li>
                     <a title="Video" data-toggle="tooltip" data-placement="bottom" data-original-title="Video" id="a_attachedvideos">
                         <i class="fa fa-video-camera"></i>
-                        <input type="file" name="attachedvideos" id="attachedvideos" accept="video/*" style="display:none;" />
+                        <input type="file" name="attachedvideos" id="attachedvideos" accept="video/*" style="display:none;" multiple/>
                     </a>
                 </li>
                 <li>
                     <a title="Attachment" data-toggle="tooltip" data-placement="bottom" data-original-title="Attachment" id="a_attachedfile">
                         <i class="fa fa-paperclip"></i>
                     </a>
-                    <input type="file" name="attachedfile" id="attachedfile" style="display:none;" />
+                    <input type="file" name="attachedfile" id="attachedfile" style="display:none;" multiple/>
                 </li>
                 <li>
                     <a title="Picture" data-toggle="tooltip" data-placement="bottom" data-original-title="Picture" id="a_attachedimages">
                         <i class="fa fa-picture-o"></i>
                     </a>
-                    <input type="file" name="attachedimages" id="attachedimages" accept="image/*" style="display:none;" />
+                    <input type="file" name="attachedimages" id="attachedimages" accept="image/*" style="display:none;" multiple/>
                 </li>
                 <li>
                     <div>
@@ -85,8 +85,8 @@
     var onSuccess = function (result) {
         if (result.response) {
             $('#error').html(result.response);
-        } else {
-            //window.location = 
+        } else if (result.url) {
+            window.location.href = result.url;
         }
     }
     $('#a_attachedaudio').click(function () {
@@ -101,9 +101,13 @@
     $('#a_attachedimages').click(function () {
         $('#attachedimages').trigger('click');
     });
+
     $('input[type="file"]').change(function (e) {
-        var fileName = e.target.files[0].name;
-        $('#ul_attachednames').append('<li>' + fileName + '<li>');
+        var filenames = "";
+        for (var i = 0; i < e.target.files.length; ++i) {
+            filenames += '<li>' + e.target.files[i].name + '</li>';
+        }
+        $('#ul_attachednames').append('<li style="padding: 10px;">' + filenames + '<li>');
     });
 
 
