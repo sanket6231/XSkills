@@ -167,7 +167,7 @@ namespace XSkills.Controllers
         public PartialViewResult CommentPartial(int postid)
         {
             //XSkillsEntities1 context = new XSkillsEntities1();
-            var comments = context.GetComments(postID: postid, commentID: null).OrderBy(x => x.CommentDate).ToList();
+            var comments = context.GetComments(postID: postid, commentID: null).OrderByDescending(x => x.CommentDate).ToList();
             ViewBag.PostId = postid;
             return PartialView("_CommentPartial", comments);
         }

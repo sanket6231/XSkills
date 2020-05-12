@@ -55,7 +55,6 @@
                             </div>
                         </div>
                         <br />
-                        <br />
                         <div class="row">
                             @foreach (var item in Model)
                             {
@@ -94,33 +93,36 @@
                                                 <br />
                                                 @if (item.Attachment == "Y")
                                                 {
-                                                    if (item.Attachment_Type.Contains("images"))
+                                                    foreach (string url in item.Attachment_URL.Split(';'))
                                                     {
-                                                        <img class="class=" card-img-bottom"" src="@item.Attachment_URL" alt="Uploaded File" />
-                                                    }
-                                                    else if (item.Attachment_Type.Contains("video"))
-                                                    {
-                                                        <video style="width:100%; height:auto;" controls>
-                                                            <source src="@Url.Content(@item.Attachment_URL)" type="@item.Attachment_Type" />
-                                                        </video>
-                                                    }
-                                                    else if (item.Attachment_Type.Contains("audio"))
-                                                    {
-                                                        <audio style="width:100%; height:auto;" controls>
-                                                            <source src="@Url.Content(@item.Attachment_URL)" type="@item.Attachment_Type">
-                                                        </audio>
-                                                    }
-                                                    else
-                                                    {
-                                                        string filename = Path.GetFileName(item.Attachment_URL); 
-                                                        <div class="row border">
-                                                            <div class="col-md-5">@filename</div>
-                                                            <div class="col-md-5">
-                                                                <a href="@Url.Action("Download", new { fileurl = item.Attachment_URL })" class="btn btn-danger">
-                                                                    <i class="fa fa-download" aria-hidden="true"></i>
-                                                                </a>
+                                                        if (item.Attachment_Type.Contains("images"))
+                                                        {
+                                                            <img class="class=" card-img-bottom"" src="@url" alt="Uploaded File" />
+                                                        }
+                                                        else if (item.Attachment_Type.Contains("video"))
+                                                        {
+                                                            <video style="width:100%; height:auto;" controls>
+                                                                <source src="@Url.Content(url)" type="@item.Attachment_Type" />
+                                                            </video>
+                                                        }
+                                                        else if (item.Attachment_Type.Contains("audio"))
+                                                        {
+                                                            <audio style="width:100%; height:auto;" controls>
+                                                                <source src="@Url.Content(url)" type="@item.Attachment_Type">
+                                                            </audio>
+                                                        }
+                                                        else
+                                                        {
+                                                            string filename = Path.GetFileName(url);
+                                                            <div class="row border">
+                                                                <div class="col-md-5">@filename</div>
+                                                                <div class="col-md-5">
+                                                                    <a href="@Url.Action("Download", new { fileurl = url })" class="btn btn-danger">
+                                                                        <i class="fa fa-download" aria-hidden="true"></i>
+                                                                    </a>
+                                                                </div>
                                                             </div>
-                                                        </div>
+                                                        }
                                                     }
                                                 }
                                             </div>
@@ -298,10 +300,9 @@
             var $replyInput = $(document).find("#replyInput-"+postid);
             var parentId = $(document).find("#hidParentId-"+postid).val();
             var $repliesUL = $(document).find("ul[data-parentid='" + parentId + "']");
-            var $commentBody = $(document).find("[data-id='" + parentId + "']");
+            var $commentBody = $(document).find("li[data-id='" + parentId + "']");
             var replyULCount = $repliesUL.length;
-
-
+            
 
             var data = JSON.stringify({
                 PostId: postid,

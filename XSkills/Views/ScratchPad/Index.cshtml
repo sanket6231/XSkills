@@ -12,6 +12,7 @@
         height: 150px;
         width: 150px;
     }
+
     .post-comments {
         padding-bottom: 9px;
         margin: 5px 0 5px;
@@ -52,16 +53,27 @@
             @{Html.RenderAction("LoginHome", "Home", new { pagename = "Scratch Pad" });}
         </div>
         <div class="col-md-9">
-            <div class="profile-content" id="MainContent">
-                <div class="container col-md-12" style="height: 70vh;overflow-x: scroll; overflow-y: scroll;">
+
+            <div class="profile-content" id="MainContent" style="height: 70vh;overflow-x: scroll; overflow-y: scroll;">
+                <p>
+                    <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                        See All Comments
+                    </a>
+                </p>
+                <div class="collapse" id="collapseExample">
+                    <div class="card card-body">
+                        @Html.Action("CommentPartial")
+                    </div>
+                </div>
+                <div class="container col-md-12" >
                     <div class="post-comments">
                         @*<form>
-                            <div class="form-group">
-                                <label for="comment">Your Comment</label>
-                                <textarea name="comment" class="form-control" rows="3"></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-default">Send</button>
-                        </form>*@
+                    <div class="form-group">
+                        <label for="comment">Your Comment</label>
+                        <textarea name="comment" class="form-control" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-default">Send</button>
+                </form>*@
                         <div class="comments-nav">
                             <ul class="nav nav-pills">
                                 <li role="presentation" class="dropdown">
@@ -366,6 +378,167 @@
         </div>
     </div>
 </div>
+
+<script id="comment-template" type="text/x-handlebars-template">
+    <li class="comment" data-id="{{commentId}}">
+        <div class="row">
+            <div class="col-md-1">
+                <div class="avatar">
+                    <a href="javascript:void(0);">
+                        <img src="{{ImgUrl}}" style="height:30px;width:30px;border-radius:50%;" />
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-11">
+                <div class="comment-body">
+                    <header>
+                        <a href="javascript:void(0);" class="userlink">{{username}}</a> - <span class="pubdate">
+                            posted {{strCommentDate}}
+                        </span>
+                    </header>
+                    <p>
+                        {{commentText}}
+                    </p>
+                    <footer>
+                        <a class="reply-link" href="{{commentId}}">Reply</a>
+                    </footer>
+                </div>
+            </div>
+        </div>
+    </li>
+</script>
+
+<script id="reply-template" type="text/template">
+    <div style="padding-top:10px" class="row reply-form">
+        <div class="row">
+            <div class="col-md-1">
+                <div class="avatar">
+                    <img class="profile_image" src="/UploadedFiles/Images/profiles/User-blue-icon.png" style="height:30px;width:30px;border-radius:50%;" />
+                </div>
+            </div>
+            <div class="col-md-10">
+                <input type="text" cols="15" id="replyInput" class="form-control" placeholder="Add a reply.." />
+            </div>
+            <div class="col-md-1 text-left">
+                <a class="addReplyBtn" href="#"><i class="fa fa-send fa_custom fa-2x"></i></a>
+                <input type="hidden" name="hidParentId" id="hidParentId" class="hidParentId" />
+            </div>
+        </div>
+    </div>
+</script>
+
+@section scripts{
+    <script src="~/Scripts/handlebars-v4.0.12.js"></script>
+    <script>
+
+        function addNewComment(data) {
+            return $.ajax({
+                type: "POST",
+                url: '@Url.Action("addNewComment", "ScratchPad")',
+                data: data,
+                dataType: 'json',
+                contentType: 'application/json;charset=utf-8'
+            });
+        }
+
+
+
+    $(function () {
+
+        var source = document.getElementById("comment-template").innerHTML;
+        var template = Handlebars.compile(source);
+
+
+        $("#addNewCommentBtn").click(function (e) {
+            e.preventDefault();
+            var data = JSON.stringify({
+                parentId: 0,
+                commentText: $("#commentInput").val()
+            });
+
+
+            $.when(addNewComment(data)).then(function (response) {
+                if (response.error == false) {
+                    var $commentHtml = template(response.result);
+                    $(".comments").append($commentHtml);
+                    $("#commentInput").val('');
+                } else {
+                    console.log("An error has occured");
+                }
+            }).fail(function (err) {
+                console.log(err);
+            })
+        });
+
+
+        $(document).on("click", ".reply-link", function (e) {
+            e.preventDefault();
+            var $self = $(this);
+            var $commentListItem = $self.parents(".comment-body");
+            var replySource = document.getElementById("reply-template").innerHTML;
+            $commentListItem.after(replySource);
+
+            $(document).find(".hidParentId").val($self.attr("href"));
+
+        });
+
+
+
+        $(document).on("click", ".addReplyBtn", function (e) {
+            e.preventDefault();
+            var $self = $(this);
+            var $replyInput = $(document).find("#replyInput");
+            var parentId = $(document).find(".hidParentId").val();
+            var $repliesUL = $(document).find("ul[data-parentid='" + parentId + "']");
+            var $commentBody = $(document).find("li[data-id='" + parentId + "']");
+            var replyULCount = $repliesUL.length;
+
+
+
+            var data = JSON.stringify({
+                parentId: parentId,
+                commentText: $replyInput.val()
+            });
+
+            $.when(addNewComment(data)).then(function (response) {
+                if (response.error == false) {
+                    var commentHtml = template(response.result);
+
+                    if (replyULCount > 0) {
+
+                        $repliesUL.append(commentHtml);
+                    } else {
+
+                        $commentBody.append("<ul class='replies'></ul>")
+                            .append(commentHtml);
+                    }
+
+                    $(document).find(".reply-form").remove();
+
+                } else {
+                    console.log("An error has occured");
+                }
+            }).fail(function (err) {
+                console.log(err);
+            })
+
+        });
+
+
+
+        });
+
+        $(document).ready(function () {
+            var imgsrc = $('.profile-userpic img').attr('src');
+            $('.profile_image').attr('src', imgsrc);
+        });
+    </script>
+
+
+}
+
+
+
 <script>
     $('[data-toggle="collapse"]').on('click', function () {
         var $this = $(this),

@@ -54,7 +54,7 @@
             type: "Post",
             data: { category: category},
             success: function (data) {
-                $('#ddl_skills_filter options').remove();
+                $('#ddl_skills_filter option').remove();
                 if (!('error' in data)) {
                     $('#ddl_skills_filter').append(new Option("All", ""));
                     for (var i = 0; i < data.length; i++) {

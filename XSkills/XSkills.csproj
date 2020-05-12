@@ -217,10 +217,16 @@
     <Compile Include="Rating.cs">
       <DependentUpon>XSkillsEntity.tt</DependentUpon>
     </Compile>
+    <Compile Include="ScratchPad.cs">
+      <DependentUpon>XSkillsEntity.tt</DependentUpon>
+    </Compile>
     <Compile Include="sp_FilterPosts_Result.cs">
       <DependentUpon>XSkillsEntity.tt</DependentUpon>
     </Compile>
     <Compile Include="sp_Filter_Posts_Result.cs">
+      <DependentUpon>XSkillsEntity.tt</DependentUpon>
+    </Compile>
+    <Compile Include="sp_GetMessages_Result.cs">
       <DependentUpon>XSkillsEntity.tt</DependentUpon>
     </Compile>
     <Compile Include="Startup.cs" />
@@ -343,6 +349,7 @@
     <Content Include="Views\Shared\SharePostpartial.cshtml" />
     <Content Include="Views\Shared\_CommentPartial.cshtml" />
     <Content Include="Views\Shared\FilterPost_popup.cshtml" />
+    <Content Include="Views\Shared\_GetMessagesPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

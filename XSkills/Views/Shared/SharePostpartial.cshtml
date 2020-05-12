@@ -4,6 +4,49 @@
     form .error {
         color: #ff0000;
     }
+    .switch-field {
+        display: flex;
+        overflow: hidden;
+    }
+
+        .switch-field input {
+            position: absolute !important;
+            clip: rect(0, 0, 0, 0);
+            height: 1px;
+            width: 1px;
+            border: 0;
+            overflow: hidden;
+        }
+
+        .switch-field label {
+            background-color: #e4e4e4;
+            color: rgba(0, 0, 0, 0.6);
+            font-size: 14px;
+            line-height: 1;
+            text-align: center;
+            padding: 8px 16px;
+            margin-right: -1px;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.1);
+            transition: all 0.1s ease-in-out;
+        }
+
+            .switch-field label:hover {
+                cursor: pointer;
+            }
+
+        .switch-field input:checked + label {
+            background-color: #a5dc86;
+            box-shadow: none;
+        }
+
+        .switch-field label:first-of-type {
+            border-radius: 4px 0 0 4px;
+        }
+
+        .switch-field label:last-of-type {
+            border-radius: 0 4px 4px 0;
+        }
 </style>
 
 @using (Ajax.BeginForm("SharePostSubmit", "KnowledgeHub",
@@ -52,15 +95,24 @@
                     </a>
                     <input type="file" name="attachedimages" id="attachedimages" accept="image/*" style="display:none;" multiple/>
                 </li>
-                <li>
-                    <div>
-                        @Html.RadioButtonFor(model => model.Section_Type, "Technical") Technical
-                        @Html.RadioButtonFor(model => model.Section_Type, "Personal") Personal
+                <li style="padding:10px">
+                    <div class="switch-field">
+                        @Html.RadioButtonFor(model => model.Section_Type, "Technical", new { @id = "radio-one" })
+                        @*<input type="radio" id="radio-one" name="switch-one" value="yes"  />*@
+                        <label for="radio-one">Technical</label>
+                        @Html.RadioButtonFor(model => model.Section_Type, "Personal", new { @id = "radio-two" })
+                        @*<input type="radio" id="radio-two" name="switch-one" value="no" />*@
+                        <label for="radio-two">Personal</label>
                         @Html.ValidationMessageFor(m => m.Section_Type, "", new { @class = "text-danger" })
                     </div>
+                    @*<div>
+                         Technical
+                         Personal
+                        
+                    </div>*@
                 </li>
-                <li>
-                    <select name="Skills" id="ddl_skills" style="display:none">
+                <li style="padding:10px">
+                    <select name="Skills" class="form-control" id="ddl_skills" style="display:none">
                         
                     </select>
                 </li>
@@ -105,9 +157,9 @@
     $('input[type="file"]').change(function (e) {
         var filenames = "";
         for (var i = 0; i < e.target.files.length; ++i) {
-            filenames += '<li>' + e.target.files[i].name + '</li>';
+            filenames += '<li style="padding: 10px">' + e.target.files[i].name + '</li>';
         }
-        $('#ul_attachednames').append('<li style="padding: 10px;">' + filenames + '<li>');
+        $('#ul_attachednames').append(filenames);
     });
 
 
@@ -127,8 +179,9 @@
             type: "Post",
             data: { category: category},
             success: function (data) {
-                $('#ddl_skills options').remove();
+                
                 if (!('error' in data)) {
+                    $('#ddl_skills option').remove();
                     $('#ddl_skills').append(new Option("-- Select Skill --", ""));
                     for (var i = 0; i < data.length; i++) {
                         var opt = new Option(data[i].Text, data[i].Value);

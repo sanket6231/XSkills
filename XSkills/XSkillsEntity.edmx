@@ -51,6 +51,18 @@
           <Property Name="Rating" Type="int" Nullable="false" />
           <Property Name="Feedback" Type="varchar(max)" Nullable="false" />
         </EntityType>
+        <EntityType Name="ScratchPad">
+          <Key>
+            <PropertyRef Name="CommentID" />
+          </Key>
+          <Property Name="CommentID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Username" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="MesgFrom" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="MesgTo" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="CommentText" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="CommentDate" Type="datetime" Nullable="false" />
+          <Property Name="ParentId" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="User_Profile">
           <Key>
             <PropertyRef Name="Name" />
@@ -86,11 +98,16 @@
           <Parameter Name="SectionType" Type="varchar" Mode="In" />
           <Parameter Name="Skills" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="sp_GetMessages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CommentID" Type="int" Mode="In" />
+          <Parameter Name="Username" Type="varchar" Mode="In" />
+        </Function>
         <EntityContainer Name="XSkillsModelStoreContainer">
           <EntitySet Name="Comment" EntityType="Self.Comment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ParaMaster" EntityType="Self.ParaMaster" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Posts" EntityType="Self.Posts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Rating" EntityType="Self.Rating" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ScratchPad" EntityType="Self.ScratchPad" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User_Profile" EntityType="Self.User_Profile" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_dbo_Comment_dbo_Posts_Pk_id" Association="Self.FK_dbo_Comment_dbo_Posts_Pk_id">
             <End Role="Posts" EntitySet="Posts" />
@@ -117,8 +134,13 @@
           </FunctionImport>
           <EntitySet Name="Ratings" EntityType="XSkillsModel.Rating" />
           <FunctionImport Name="GetComments" ReturnType="Collection(XSkillsModel.GetComments_Result)">
-          <Parameter Name="PostID" Mode="In" Type="Int32" />
+            <Parameter Name="PostID" Mode="In" Type="Int32" />
             <Parameter Name="CommentID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <EntitySet Name="ScratchPads" EntityType="XSkillsModel.ScratchPad" />
+          <FunctionImport Name="sp_GetMessages" ReturnType="Collection(XSkillsModel.sp_GetMessages_Result)">
+          <Parameter Name="CommentID" Mode="In" Type="Int32" />
+            <Parameter Name="Username" Mode="In" Type="String" />
           </FunctionImport>
         </EntityContainer>
         <EntityType Name="User_Profile">
@@ -242,6 +264,28 @@
           <Property Type="String" Name="ImgUrl" Nullable="true" />
           <Property Type="String" Name="CommentText" Nullable="false" />
         </ComplexType>
+        <EntityType Name="ScratchPad">
+          <Key>
+            <PropertyRef Name="CommentID" />
+          </Key>
+          <Property Name="CommentID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Username" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MesgFrom" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MesgTo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CommentText" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CommentDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ParentId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <ComplexType Name="sp_GetMessages_Result">
+          <Property Type="Int32" Name="CommentID" Nullable="false" />
+          <Property Type="String" Name="Username" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="MesgFrom" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="MesgTo" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="CommentText" Nullable="false" />
+          <Property Type="DateTime" Name="CommentDate" Nullable="false" Precision="23" />
+          <Property Type="Int32" Name="ParentId" Nullable="false" />
+          <Property Type="String" Name="ImgUrl" Nullable="true" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -339,6 +383,33 @@
                 <ScalarProperty Name="ParentId" ColumnName="ParentId" />
                 <ScalarProperty Name="ImgUrl" ColumnName="ImgUrl" />
                 <ScalarProperty Name="CommentText" ColumnName="CommentText" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="ScratchPads">
+            <EntityTypeMapping TypeName="XSkillsModel.ScratchPad">
+              <MappingFragment StoreEntitySet="ScratchPad">
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="CommentDate" ColumnName="CommentDate" />
+                <ScalarProperty Name="CommentText" ColumnName="CommentText" />
+                <ScalarProperty Name="MesgTo" ColumnName="MesgTo" />
+                <ScalarProperty Name="MesgFrom" ColumnName="MesgFrom" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="CommentID" ColumnName="CommentID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="sp_GetMessages" FunctionName="XSkillsModel.Store.sp_GetMessages">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="XSkillsModel.sp_GetMessages_Result">
+                <ScalarProperty Name="CommentID" ColumnName="CommentID" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="MesgFrom" ColumnName="MesgFrom" />
+                <ScalarProperty Name="MesgTo" ColumnName="MesgTo" />
+                <ScalarProperty Name="CommentText" ColumnName="CommentText" />
+                <ScalarProperty Name="CommentDate" ColumnName="CommentDate" />
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="ImgUrl" ColumnName="ImgUrl" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

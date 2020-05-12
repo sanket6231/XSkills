@@ -32,6 +32,7 @@ namespace XSkills
         public virtual DbSet<Post> Posts { get; set; }
         public virtual DbSet<ParaMaster> ParaMasters { get; set; }
         public virtual DbSet<Rating> Ratings { get; set; }
+        public virtual DbSet<ScratchPad> ScratchPads { get; set; }
     
         public virtual ObjectResult<sp_Filter_Posts_Result> sp_Filter_Posts(string postedBy, string sectionType, string skills)
         {
@@ -61,6 +62,19 @@ namespace XSkills
                 new ObjectParameter("CommentID", typeof(int));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetComments_Result>("GetComments", postIDParameter, commentIDParameter);
+        }
+    
+        public virtual ObjectResult<sp_GetMessages_Result> sp_GetMessages(Nullable<int> commentID, string username)
+        {
+            var commentIDParameter = commentID.HasValue ?
+                new ObjectParameter("CommentID", commentID) :
+                new ObjectParameter("CommentID", typeof(int));
+    
+            var usernameParameter = username != null ?
+                new ObjectParameter("Username", username) :
+                new ObjectParameter("Username", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<sp_GetMessages_Result>("sp_GetMessages", commentIDParameter, usernameParameter);
         }
     }
 }
