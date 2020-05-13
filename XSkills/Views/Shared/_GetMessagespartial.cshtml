@@ -5,117 +5,55 @@
     foreach (var comment in comments)
     {
         comment.ImgUrl = comment.ImgUrl == null ? "/UploadedFiles/Images/profiles/User-blue-icon.png" : comment.ImgUrl;
-<li class="comment" data-id="@comment.CommentID">
+<li class="comment" data-id="@comment.CommentID" >
     <div class="media">
         <!-- first comment -->
         <div class="media-heading">
-            <button class="btn btn-default btn-xs" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseExample"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button> <span class="label label-info">12314</span> terminator 12 hours ago
+            <button class="btn btn-default btn-xs" type="button" data-toggle="collapse" data-target="#collapseOne-@comment.CommentID"
+                    aria-expanded="false" aria-controls="collapseExample">
+                <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+            </button><span class="label label-info">@comment.Username</span> - <span class="pubdate">posted @comment.CommentDate.ToString("dd-MM-yyyy HH:mm:ss")</span>
         </div>
-        <div class="panel-collapse collapse in" id="collapseOne">
-            
+        <div class="panel-collapse collapse in" id="collapseOne-@comment.CommentID">
             <div class="media-body">
-                <p>Hi, I just saw you have completed Azure certification. I am also planning for the same. Can you help me with the contents?</p>
-                <div class="comment-meta">
-                    <span><a href="#">delete</a></span>
-                    <span><a href="#">report</a></span>
-                    <span><a href="#">hide</a></span>
-                    <span>
-                        <a class="" role="button" data-toggle="collapse" href="#replyCommentT" aria-expanded="false" aria-controls="collapseExample">reply</a>
-                    </span>
-                    <div class="collapse" id="replyCommentT">
-                        <form>
-                            <div class="form-group">
-                                <label for="comment">Your Comment</label>
-                                <textarea name="comment" class="form-control" rows="3"></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-default">Send</button>
-                        </form>
+                <div class="row">
+                    <div class="col-md-1">
+                        <div class="avatar">
+                            <a href="javascript:void(0);">
+                                <img src="@comment.ImgUrl" style="height:30px;width:30px;border-radius:50%;" />
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-11">
+                        <div data-id="@comment.CommentID" class="comment-body">
+                            @*<header><a href="#" class="userlink">@comment.Username</a> - <span class="pubdate">posted @comment.CommentDate.ToString("dd-MM-yyyy HH:mm:ss")</span></header>*@
+                            <p>
+                                @comment.CommentText
+                            </p>
+                            <footer>
+                                <a class="reply-link" href="@comment.CommentID">Reply</a>
+                            </footer>
+                        </div>
                     </div>
                 </div>
                 <!-- comment-meta -->
-                <div class="media">
-                    <!-- answer to the first comment -->
-                    <div class="media-heading">
-                        <button class="btn btn-default btn-collapse btn-xs" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseExample"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button> <span class="label label-info">12314</span> Comments
-                    </div>
-                    <div class="panel-collapse collapse in" id="collapseTwo">
-                        <div class="media-left">
-                            <div class="vote-wrap">
-                                <div class="save-post">
-                                    <a href="#"><span class="glyphicon glyphicon-star" aria-label="Save"></span></a>
-                                </div>
-                                <div class="vote up">
-                                    <i class="glyphicon glyphicon-menu-up"></i>
-                                </div>
-                                <div class="vote inactive">
-                                    <i class="glyphicon glyphicon-menu-down"></i>
-                                </div>
-                            </div>
-                            <!-- vote-wrap -->
-                        </div>
-                        <!-- media-left -->
 
-                        <div class="media-body">
-                            <p>Yeah Sure! Start learning from official website. It has all the content and explained very well..</p>
-                            <div class="comment-meta">
-                                <span><a href="#">delete</a></span>
-                                <span><a href="#">report</a></span>
-                                <span><a href="#">hide</a></span>
-                                <span>
-                                    <a class="" role="button" data-toggle="collapse" href="#replyCommentThree" aria-expanded="false" aria-controls="collapseExample">reply</a>
-                                </span>
-                                <div class="collapse" id="replyCommentThree">
-                                    <form>
-                                        <div class="form-group">
-                                            <label for="comment">Your Comment</label>
-                                            <textarea name="comment" class="form-control" rows="3"></textarea>
-                                        </div>
-                                        <button type="submit" class="btn btn-default">Send</button>
-                                    </form>
-                                </div>
-                            </div>
-                            <!-- comment-meta -->
-                        </div>
-                    </div>
-                    <!-- comments -->
-                </div>
-                <!-- answer to the first comment -->
             </div>
+            @{
+                var children = Model.Where(x => x.ParentId == comment.CommentID).OrderBy(x => x.CommentDate).ToList();
+                if (children.Count() > 0)
+                {
+                    <ul data-parentid="@comment.CommentID" class="replies">
+                        @RenderComment(children)
+                    </ul>
+                }
+            }
         </div>
         <!-- comments -->
     </div>
-    <div class="row">
-        <div class="col-md-1">
-            <div class="avatar">
-                <a href="javascript:void(0);">
-                    <img src="@comment.ImgUrl" style="height:30px;width:30px;border-radius:50%;" />
-                </a>
-            </div>
-        </div>
-        <div class="col-md-11">
-            <div data-id="@comment.CommentID" class="comment-body">
-                <header><a href="javascript:void(0);" class="userlink">@comment.Username</a> - <span class="pubdate">posted @comment.CommentDate.ToString("dd-MM-yyyy HH:mm:ss")</span></header>
-                <p>
-                    @comment.CommentText
-                </p>
-                <footer>
-                    <a class="reply-link" href="@comment.CommentID">Reply</a>
-                </footer>
-            </div>
-        </div>
-    </div>
 
 
-
-    @{
-        var children = Model.Where(x => x.ParentId == comment.CommentID).OrderBy(x => x.CommentDate).ToList();
-        if (children.Count() > 0)
-        {
-            <ul data-parentid="@comment.CommentID" class="replies">
-                @RenderComment(children)
-            </ul>
-        }
-    }
+    
 
 </li>
 
