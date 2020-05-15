@@ -10,22 +10,85 @@
     @Scripts.Render("~/bundles/bootstrap")
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
     <style>
+        /*.glyphicon {
+            line-height: 3;
+        }*/
+
         .navbar-inverse {
             background-color: ghostwhite;
             /*background-image: -o-linear-gradient(top, #3c3c3c 0%, ghostwhite 100%);
             background-image: -webkit-gradient(linear, left top, left bottom, from(#3c3c3c), to(ghostwhite));
             background-image: linear-gradient(to bottom, #3c3c3c 0%, ghostwhite 100%);*/
         }
+
             .navbar-inverse .navbar-nav > li > a {
-                font-size:16px;
+                font-size: 16px;
             }
     </style>
+    <style type="text/css">
+        /*Added css for design notification area, you can design by your self*/
+        /* COPY css content from youtube video description*/
+        .noti-content {
+            position: fixed;
+            /*right: 100px;*/
+            background: #e5e5e5;
+            border-radius: 4px;
+            top: 47px;
+            width: 250px;
+            display: none;
+            border: 1px solid #9E988B;
+        }
+
+        ul#notiContent {
+            max-height: 200px;
+            overflow: auto;
+            padding: 0px;
+            margin: 0px;
+            padding-left: 20px;
+        }
+
+            ul#notiContent li {
+                margin: 3px;
+                padding: 6px;
+                background: #fff;
+            }
+
+        .noti-top-arrow {
+            border-color: transparent;
+            border-bottom-color: #F5DEB3;
+            border-style: dashed dashed solid;
+            border-width: 0 8.5px 8.5px;
+            position: absolute;
+            /*right: 32px;*/
+            top: -8px;
+        }
+
+        span.noti {
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        span.count {
+            position: relative;
+            top: -12px;
+            background: red;
+            padding: 3px;
+            font-family: monospace;
+            border-radius: 45%;
+            color: white;
+            font-size: small;
+            display:none;
+        }
+    </style>
+    <script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+    <script src="/signalr/hubs"></script>
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
 
             <div class="navbar-header">
+
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
@@ -42,6 +105,15 @@
                     @if (User.Identity.IsAuthenticated)
                     {
                         <li>@Html.ActionLink("Home", "Index", "KnowledgeHub")</li>
+                        <li>
+                            <span class="noti glyphicon glyphicon-bell" style="line-height: 3;"><span class="count">&nbsp;</span></span>
+                            <div class="noti-content">
+                                <div class="noti-top-arrow"></div>
+                                <ul id="notiContent">
+                                    <li>No Notifications</li>
+                                </ul>
+                            </div>
+                        </li>
                     }
                     else
                     {
@@ -50,10 +122,10 @@
                     @*<li>@Html.ActionLink("About", "About", "Home")</li>*@
                     @*<li>@Html.ActionLink("Contact", "Contact", "Home")</li>*@
                     @*@if (User.Identity.IsAuthenticated)
-                    {
-                        <li>@Html.ActionLink("Team Members", "About", "Home")</li>
-                        <li>@Html.ActionLink("Knowledge Hub", "About", "Home")</li>
-                    }*@
+                        {
+                            <li>@Html.ActionLink("Team Members", "About", "Home")</li>
+                            <li>@Html.ActionLink("Knowledge Hub", "About", "Home")</li>
+                        }*@
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>
@@ -67,7 +139,89 @@
         </footer>
     </div>
 
-    
+
     @RenderSection("scripts", required: false)
+
+    
+
+    @* Add jquery code for Get Notification & setup signalr *@
+    <script type="text/javascript">
+        $(function () {
+            // Click on notification icon for show notification
+            $('span.noti').click(function (e) {
+                e.stopPropagation();
+                $('.noti-content').show();
+                var count = 0;
+                count = parseInt($('span.count').html()) || 0;
+                //only load notification if not already loaded
+                if (count > 0) {
+                    updateNotification();
+                }
+                $('span.count').hide();
+                $('span.count', this).html('&nbsp;');
+            });
+            // hide notifications
+            $('html').click(function () {
+                $('.noti-content').hide();
+            });
+            // update notification
+            function updateNotification() {
+                $('#notiContent').empty();
+                $('#notiContent').append($('<li>Loading...</li>'));
+
+                $.ajax({
+                    type: 'GET',
+                    url: '/home/GetNotificationContacts',
+                    success: function (response) {
+                        $('#notiContent').empty();
+                        if (response.length == 0) {
+                            $('#notiContent').append($('<li>No Notifications</li>'));
+                        }
+                        $.each(response, function (index, value) {
+                            var htmlstring = `<a href="/ScratchPad/Index" style='display:inline:flex;'>
+                                                    <div class="icon-circle bg-light-green">
+                                                        <i class="glyphicon glyphicon-comment"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h5>`+ value.Username + `</h4>
+                                                        <h6>`+ value.CommentText + `</h5>
+                                                        <small>
+                                                            <i class="glyphicon glyphicon-time"></i> `+ value.CommentDate + `
+                                                        </p>
+                                                    </div>
+                                                </a>`
+                            $('#notiContent').append($('<li>' + htmlstring + '</li>'));
+                        });
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                })
+            }
+            // update notification count
+            function updateNotificationCount() {
+                var count = 0;
+                count = parseInt($('span.count').html()) || 0;
+                count++;
+                $('span.count').show();
+                $('span.count').html(count);
+            }
+            // signalr js code for start hub and send receive notification
+            var notificationHub = $.connection.notificationHub;
+            $.connection.hub.start().done(function () {
+                console.log('Notification hub started');
+                //updateNotification();
+            });
+
+            //signalr method for push server message to client
+            notificationHub.client.notify = function (message) {
+                if (message && message.toLowerCase() == "added") {
+                    updateNotificationCount();
+                }
+            }
+            
+
+        });
+    </script>
 </body>
 </html>

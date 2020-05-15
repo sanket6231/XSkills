@@ -8,12 +8,15 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
+using XSkills.Hubs;
 using XSkills.Models;
 
 namespace XSkills.Controllers
 {
     public class HomeController : Controller
     {
+        ApplicationDbContext dbContext = new ApplicationDbContext();
+        XSkillsEntities1 xSkills = new XSkillsEntities1();
 
         public ActionResult Index()
         {
@@ -40,10 +43,10 @@ namespace XSkills.Controllers
         {
             string user = User.Identity.GetUserName();
             //var model = _userManager.FindByEmail(user);
-            ApplicationDbContext dbContext = new ApplicationDbContext();
+            
             string name = dbContext.Users.Where(x => x.Email == user).FirstOrDefault().Name;
-            XSkillsEntities1 xSkills = new XSkillsEntities1();
             User_Profile model = xSkills.User_Profile.Where(x => x.Name == name).FirstOrDefault();
+
             ViewBag.username = name;
             ViewBag.ImageUrl = model.ImgUrl;
             ViewBag.page = pagename;
@@ -54,9 +57,8 @@ namespace XSkills.Controllers
         public ActionResult EditProfile()
         {
             string user = User.Identity.GetUserName();
-            ApplicationDbContext dbContext = new ApplicationDbContext();
             string name = dbContext.Users.Where(x => x.Email == user).FirstOrDefault().Name;
-            XSkillsEntities1 xSkills = new XSkillsEntities1();
+            
             User_Profile model = xSkills.User_Profile.Where(x => x.Name == name).FirstOrDefault();
             //ViewBag.ImageUrl = model.ImgUrl;
             //ViewBag.username = name;
@@ -124,6 +126,20 @@ namespace XSkills.Controllers
                 
             }
             return View();
+        }
+
+        [Authorize]
+        public JsonResult GetNotificationContacts()
+        {
+            string user = User.Identity.GetUserName();
+            string name = dbContext.Users.Where(x => x.Email == user).FirstOrDefault().Name;
+
+            var notificationRegisterTime = Session["LastUpdated"] != null ? Convert.ToDateTime(Session["LastUpdated"]) : DateTime.Now;
+            NotificationComponent NC = new NotificationComponent();
+            var list = NC.GetNotifications(Convert.ToDateTime(Session["LastUpdated"]), name);
+            //update session here for get only new added contacts (notification)
+            Session["LastUpdated"] = DateTime.Now;
+            return new JsonResult { Data = list, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
         }
     }
 }

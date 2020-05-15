@@ -1,10 +1,10 @@
-﻿@model List<XSkills.sp_GetMessages_Result>
+﻿@model IEnumerable<XSkills.Models.ScratchPadModel>
 
-@helper RenderComment(List<XSkills.sp_GetMessages_Result> comments)
+@helper RenderComment(IEnumerable<XSkills.Models.ScratchPadModel> comments)
 {
-    foreach (var comment in comments)
-    {
-        comment.ImgUrl = comment.ImgUrl == null ? "/UploadedFiles/Images/profiles/User-blue-icon.png" : comment.ImgUrl;
+foreach (var comment in comments.ToList())
+{
+    comment.ImgUrl = comment.ImgUrl == null ? "/UploadedFiles/Images/profiles/User-blue-icon.png" : comment.ImgUrl;
 <li class="comment" data-id="@comment.CommentID" >
     <div class="media">
         <!-- first comment -->
@@ -40,7 +40,7 @@
 
             </div>
             @{
-                var children = Model.Where(x => x.ParentId == comment.CommentID).OrderBy(x => x.CommentDate).ToList();
+                var children = Model.Where(x => x.ParentId == comment.CommentID).OrderBy(x => x.CommentDate);
                 if (children.Count() > 0)
                 {
                     <ul data-parentid="@comment.CommentID" class="replies">
@@ -64,7 +64,7 @@
 <div id="comment-section" class="row CommentSection">
     <div class="col-sm-12">
         <ul class="comments">
-            @RenderComment(Model.Where(x => x.ParentId == 0).ToList())
+            @RenderComment(Model.Where(x => x.ParentId == 0))
         </ul>
     </div>
 

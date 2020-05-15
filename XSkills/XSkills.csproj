@@ -45,6 +45,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.4.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.2.4.1\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.SystemWeb, Version=2.4.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.SystemWeb.2.4.1\lib\net45\Microsoft.AspNet.SignalR.SystemWeb.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -187,6 +193,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Hubs\MessagesHub.cs" />
+    <Compile Include="Hubs\NotificationComponent.cs" />
+    <Compile Include="Hubs\NotificationHub.cs" />
     <Compile Include="Migrations\202004281540565_InitialCreate.cs" />
     <Compile Include="Migrations\202004281540565_InitialCreate.Designer.cs">
       <DependentUpon>202004281540565_InitialCreate.cs</DependentUpon>
@@ -202,10 +211,13 @@
     <Compile Include="Models\EditProfileModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\Messages.cs" />
+    <Compile Include="Models\MessagesRepository.cs" />
     <Compile Include="Models\PostsDbContext.cs" />
     <Compile Include="Models\PostsModel.cs" />
     <Compile Include="Models\PostsViewModel.cs" />
     <Compile Include="Models\RatingModel.cs" />
+    <Compile Include="Models\ScratchPadModel.cs" />
     <Compile Include="Models\TeamMembersModel.cs" />
     <Compile Include="ParaMaster.cs">
       <DependentUpon>XSkillsEntity.tt</DependentUpon>
@@ -262,6 +274,8 @@
     <Content Include="Scripts\handlebars-v4.0.12.js" />
     <Content Include="Scripts\jquery-ui.js" />
     <Content Include="Scripts\jquery-ui.min.js" />
+    <Content Include="Scripts\jquery.signalR-2.4.1.js" />
+    <Content Include="Scripts\jquery.signalR-2.4.1.min.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="UploadedFiles\Images\4e0f683f152c1e201daacd7e6bf6d9b8.png" />
     <Content Include="UploadedFiles\Images\IMG-20200429-WA0002.jpg" />
@@ -285,6 +299,8 @@
     </Content>
     <Content Include="Content\Rating\src\starrr.coffee" />
     <Content Include="Content\Rating\src\starrr.scss" />
+    <Content Include="libman.json" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
@@ -350,6 +366,7 @@
     <Content Include="Views\Shared\_CommentPartial.cshtml" />
     <Content Include="Views\Shared\FilterPost_popup.cshtml" />
     <Content Include="Views\Shared\_GetMessagesPartial.cshtml" />
+    <Content Include="Views\Shared\_MessagesList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

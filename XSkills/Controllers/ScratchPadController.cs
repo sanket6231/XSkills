@@ -12,6 +12,7 @@ namespace XSkills.Controllers
     {
         XSkillsEntities1 context = new XSkillsEntities1();
         ApplicationDbContext dbContext = new ApplicationDbContext();
+        
 
         // GET: ScratchPad
         public ActionResult Index()
@@ -23,8 +24,10 @@ namespace XSkills.Controllers
         {
             string userid = User.Identity.Name;
             string username = dbContext.Users.Where(x => x.Email == userid).FirstOrDefault().Name;
-
-            var comments = context.sp_GetMessages(username: username, commentID: null).OrderByDescending(x => x.CommentDate).ToList();
+            MessagesRepository _messageRepository = new MessagesRepository();
+            //return PartialView("_MessagesList", _messageRepository.GetAllMessages(0, username));
+            var comments = _messageRepository.GetAllMessages(0, username).OrderByDescending(x => x.CommentDate).ToList();
+            //var comments = context.sp_GetMessages(username: username, commentID: null).OrderByDescending(x => x.CommentDate).ToList();
             return PartialView("_GetMessagesPartial", comments);
         }
 

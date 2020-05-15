@@ -1,0 +1,38 @@
+﻿@model IEnumerable<XSkills.Models.ScratchPadModel>
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>@Html.DisplayNameFor(model => model.CommentID)</th>
+        <th>
+            @Html.DisplayNameFor(model => model.CommentText)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MesgFrom)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CommentDate)
+        </th>
+
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CommentID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CommentText)
+            </td>
+            <th>
+                @Html.DisplayFor(modelItem => item.MesgFrom)
+            </th>
+            <td>
+                @Html.DisplayFor(modelItem => item.CommentDate)
+            </td>
+
+        </tr>
+    }
+</table>
+

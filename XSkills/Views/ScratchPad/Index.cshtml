@@ -12,7 +12,7 @@
         height: 150px;
         width: 150px;
     }
-
+    
     .post-comments {
         padding-bottom: 9px;
         margin: 5px 0 5px;
@@ -54,17 +54,17 @@
         </div>
         <div class="col-md-9">
             <div class="profile-content" id="MainContent" style="height: 70vh;overflow-x: scroll; overflow-y: scroll;">
-                @Html.Action("CommentPartial")
+                @*@Html.Action("CommentPartial")*@
                 @*<p>
-                    <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                        See All Comments
-                    </a>
-                </p>
-                <div class="collapse" id="collapseExample">
-                    <div class="card card-body">
+                        <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                            See All Comments
+                        </a>
+                    </p>
+                    <div class="collapse" id="collapseExample">
+                        <div class="card card-body">
 
-                    </div>
-                </div>*@
+                        </div>
+                    </div>*@
             </div>
         </div>
     </div>
@@ -108,30 +108,6 @@
             </div>
             <!-- comments -->
         </div>
-        @*<div class="row">
-            <div class="col-md-1">
-                <div class="avatar">
-                    <a href="javascript:void(0);">
-                        <img src="{{ImgUrl}}" style="height:30px;width:30px;border-radius:50%;" />
-                    </a>
-                </div>
-            </div>
-            <div class="col-md-11">
-                <div class="comment-body">
-                    <header>
-                        <a href="javascript:void(0);" class="userlink">{{username}}</a> - <span class="pubdate">
-                            posted {{strCommentDate}}
-                        </span>
-                    </header>
-                    <p>
-                        {{commentText}}
-                    </p>
-                    <footer>
-                        <a class="reply-link" href="{{commentId}}">Reply</a>
-                    </footer>
-                </div>
-            </div>
-        </div>*@
     </li>
 </script>
 
@@ -155,6 +131,36 @@
 </script>
 
 @section scripts{
+    
+
+    <script type="text/javascript">
+        $(function () {
+            // Declare a proxy to reference the hub.
+            var notificationHub = $.connection.notificationHub;
+            notificationHub.client.updateMessages = function (message) {
+                if (message && message.toLowerCase() == "added") {
+                    getAllMessages();
+                }
+            }
+        });
+
+
+        function getAllMessages() {
+            var tbl = $('#MainContent');
+            $.ajax({
+                url: '/ScratchPad/CommentPartial',
+                contentType: 'application/html ; charset:utf-8',
+                type: 'GET',
+                success: function (result) {
+                            tbl.empty().append(result);
+                },
+                error: function(e) {
+                    alert(e.responseText);
+                }
+            });
+        }
+    </script>
+
     <script src="~/Scripts/handlebars-v4.0.12.js"></script>
     <script>
 
