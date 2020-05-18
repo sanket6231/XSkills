@@ -10,18 +10,10 @@
 namespace XSkills
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class User_Profile
+    public partial class splitstring_Result
     {
-        public int pk_id { get; set; }
+        public int id { get; set; }
         public string Name { get; set; }
-        public string Wave { get; set; }
-        public string Skills { get; set; }
-        public string Trainings { get; set; }
-        public string Certifications { get; set; }
-        public string ImgUrl { get; set; }
-        public string Suggestions { get; set; }
-        public string Aspirational_Skills { get; set; }
     }
 }

@@ -1,12 +1,9 @@
-﻿@model XSkills.User_Profile
+﻿@model XSkills.Models.EditProfileModel
 @{
     ViewBag.Title = "MyProfile";
 }
 
-@*<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>*@
+
 <link href="~/Content/Site.css" rel="stylesheet" />
 <style type="text/css">
 
@@ -24,65 +21,72 @@
             <div class="profile-content" id="MainContent">
                 @using (Html.BeginForm("EditProfile", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
                 {
-                <div class="col-md-8">
-                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="col-md-8">
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-                    <div class="form-group">
-                        <div class="col-md-10">
-                            @Html.Label("Hi there, I am " + Model.Name + " belonging to " + Model.Wave + " !!", 
-                                                htmlAttributes: new { @class = "control-label" })
+                        <div class="form-group">
+                            <div class="col-md-10">
+                                @Html.Label("Hi there, I am " + Model.Name + " belonging to " + Model.Wave + " !!",
+                                                    htmlAttributes: new { @class = "control-label" })
+                            </div>
                         </div>
-                    </div>
-                    <br />
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.Wave, htmlAttributes: new { @class = "control-label col-md-2" })
-                        <div class="col-md-10">
-                            @Html.EditorFor(model => model.Wave, new { htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model.Wave, "", new { @class = "text-danger" })
+                        <br />
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Wave, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.Wave, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Wave, "", new { @class = "text-danger" })
+                            </div>
                         </div>
-                    </div>
-                    <br />
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.Skills, htmlAttributes: new { @class = "control-label col-md-2" })
-                        <div class="col-md-10">
-                            @Html.EditorFor(model => model.Skills, new { htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model.Skills, "", new { @class = "text-danger" })
+                        <br />
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Skills, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.Skills, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Skills, "", new { @class = "text-danger" })
+                            </div>
                         </div>
-                    </div>
-                    <br />
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.Certifications, htmlAttributes: new { @class = "control-label col-md-2" })
-                        <div class="col-md-10">
-                            @Html.EditorFor(model => model.Certifications, new { htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model.Certifications, "", new { @class = "text-danger" })
+                        <br />
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Certifications, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.Certifications, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Certifications, "", new { @class = "text-danger" })
+                            </div>
                         </div>
-                    </div>
-                    <br />
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.Trainings, htmlAttributes: new { @class = "control-label col-md-2" })
-                        <div class="col-md-10">
-                            @Html.EditorFor(model => model.Trainings, new { htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model.Trainings, "", new { @class = "text-danger" })
+                        <br />
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Trainings, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.Trainings, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Trainings, "", new { @class = "text-danger" })
+                            </div>
                         </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.AspirationSkills, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.ListBoxFor(model => model.AspirationSkillsIds, Model.AspirationSkills, new { @class = "form-control listbox" })
+                                @Html.ValidationMessageFor(model => model.AspirationSkillsIds, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <input type="submit" value="Edit" class="btn btn-success" />
                     </div>
-                    <input type="submit" value="Edit" class="btn btn-success" />
-                </div>
-                <div class="col-md-4">
-                    @if (Model.ImgUrl != null)
-                    {
-                        <img src="@Url.Content(Model.ImgUrl)" class="img-responsive" alt="Profile" />
-                    }
-                    else
-                    {
-                        <img class="img-responsive" alt="Profile" src="~/UploadedFiles/Images/profiles/User-blue-icon.png" />
-                    }
-                    @Html.HiddenFor(model => model.ImgUrl)
-                    @Html.HiddenFor(model => model.Name)
-                    <br />
-                    <input type="file" name="postedFile" />
-                </div>
-                    
-                    
+                    <div class="col-md-4">
+                        @if (Model.ImgUrl != null)
+                        {
+                            <img src="@Url.Content(Model.ImgUrl)" class="img-responsive" alt="Profile" />
+                        }
+                        else
+                        {
+                            <img class="img-responsive" alt="Profile" src="~/UploadedFiles/Images/profiles/User-blue-icon.png" />
+                        }
+                        @Html.HiddenFor(model => model.ImgUrl)
+                        @Html.HiddenFor(model => model.Name)
+                        <br />
+                        <input type="file" name="postedFile" />
+                    </div>
+
+
 
 
                 }
@@ -90,3 +94,12 @@
         </div>
     </div>
 </div>
+<link href="~/Content/bootstrap-multiselect.css" rel="stylesheet" />
+<script src="~/Scripts/bootstrap-multiselect.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('.listbox').multiselect({
+            includeSelectAllOption: true
+        });
+    });
+</script>

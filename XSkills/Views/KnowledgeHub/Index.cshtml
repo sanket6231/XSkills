@@ -16,9 +16,22 @@
     .fa_custom {
         color: #0099CC
     }
+    #newJoinerInfo {
+        position: fixed;
+        bottom: 20px;
+        right: 30px;
+        z-index: 99;
+        font-size: 18px;
+        border: none;
+        outline: none;
+        padding: 15px;
+        border-radius: 4px;
+        width: 30%;
+        height:230px;
+    }
 </style>
 
-<div class="container" id="MainContent" >
+<div class="container" id="MainContent">
     <div class="row profile">
         <div class="col-md-3">
             @{Html.RenderAction("LoginHome", "Home", new { pagename = "Knowledge Hub" });}
@@ -179,6 +192,23 @@
         @{Html.RenderPartial("FilterPost_popup", new XSkills.Models.PostsViewModel());}
     </div>
 
+    <div class="card" id="newJoinerInfo">
+        <div>
+            <button type="button" class="btn close" id="close"
+                    data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">x</span>
+            </button>
+        </div>
+        <div class="card-body">
+            <h4>Hi <b>@ViewBag.username</b> !!</h4>
+            <h5 style="margin-top: 10px;"><i>Welcome to CrossSkill!</i></h5>
+            <h5><i>Team up with <b><span id="names"></span></b> to build up & Strengthen your goals..</i></h5>
+            <hr />
+            <input type="checkbox" value="Dnd" id="chk_dnd" /><small>Do not show this again</small>
+            <br />
+        </div>
+    </div>
+
     <script id="comment-template" type="text/x-handlebars-template">
         <li class="comment" data-id="{{commentId}}">
             <div class="row">
@@ -233,7 +263,33 @@
         <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.12.1/jquery-ui.js"></script>
         <link rel="stylesheet" type="text/css" href="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.12.1/themes/blitzer/jquery-ui.css" />
         <script>
-
+            $(function () {
+                $.ajax({
+                type: "GET",
+                url: '@Url.Action("displaySuggestions", "KnowledgeHub")',
+                dataType: 'json',
+                contentType: 'application/json;charset=utf-8',
+                success: function (result) {
+                    if (result.Suggestions == 'Y') {
+                        $('#newJoinerInfo').show();
+                        $('#names').text(result.Names);
+                    } else {
+                        $('#newJoinerInfo').hide();}
+                }
+            });
+            
+            $('#close').click(function () {
+                $('#newJoinerInfo').hide();
+                if (document.getElementById('chk_dnd').checked == true) {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("displaySuggestions", "KnowledgeHub")',
+                        data: { value: 'N'}
+                    });
+                }
+            });
+            });
+            
         function addNewComment(data) {
             return $.ajax({
                 type: "POST",
@@ -302,7 +358,7 @@
             var $repliesUL = $(document).find("ul[data-parentid='" + parentId + "']");
             var $commentBody = $(document).find("li[data-id='" + parentId + "']");
             var replyULCount = $repliesUL.length;
-            
+
 
             var data = JSON.stringify({
                 PostId: postid,
@@ -343,6 +399,13 @@
                 var imgsrc = $('.profile-userpic img').attr('src');
                 $('.profile_image').attr('src',imgsrc);
 
+                $("#pageLoadDialog").dialog({
+                    autoOpen: true,
+                    modal: true,
+                    width: 500,
+                    draggable: false,
+                });
+
                 $('#btn_filter').click(function () {
                     $("#dialog").dialog('open');
                     $.ajax({
@@ -371,7 +434,7 @@
                     title: "Filters"
                 });
             });
-            
+
         </script>
 
     }

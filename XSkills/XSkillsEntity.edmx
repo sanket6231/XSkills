@@ -5,6 +5,25 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="XSkillsModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="AspNetUsers">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="Email" Type="nvarchar" MaxLength="256" />
+          <Property Name="EmailConfirmed" Type="bit" Nullable="false" />
+          <Property Name="PasswordHash" Type="nvarchar(max)" />
+          <Property Name="SecurityStamp" Type="nvarchar(max)" />
+          <Property Name="PhoneNumber" Type="nvarchar(max)" />
+          <Property Name="PhoneNumberConfirmed" Type="bit" Nullable="false" />
+          <Property Name="TwoFactorEnabled" Type="bit" Nullable="false" />
+          <Property Name="LockoutEndDateUtc" Type="datetime" />
+          <Property Name="LockoutEnabled" Type="bit" Nullable="false" />
+          <Property Name="AccessFailedCount" Type="int" Nullable="false" />
+          <Property Name="UserName" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="LastLoginOn" Type="datetime" />
+        </EntityType>
         <EntityType Name="Comment">
           <Key>
             <PropertyRef Name="CommentID" />
@@ -74,6 +93,8 @@
           <Property Name="Trainings" Type="varchar(max)" />
           <Property Name="Certifications" Type="varchar(max)" />
           <Property Name="ImgUrl" Type="varchar(max)" />
+          <Property Name="Suggestions" Type="char" MaxLength="1" />
+          <Property Name="Aspirational_Skills" Type="varchar" MaxLength="100" />
         </EntityType>
         <Association Name="FK_dbo_Comment_dbo_Posts_Pk_id">
           <End Role="Posts" Type="Self.Posts" Multiplicity="1">
@@ -102,7 +123,22 @@
           <Parameter Name="CommentID" Type="int" Mode="In" />
           <Parameter Name="Username" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="sp_GetSuggestions" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Username" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="splitstring" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="stringToSplit" Type="varchar(max)" Mode="In" />
+          <ReturnType>
+            <CollectionType>
+              <RowType>
+                <Property Name="id" Type="int" Nullable="false" />
+                <Property Name="Name" Type="nvarchar" MaxLength="500" />
+              </RowType>
+            </CollectionType>
+          </ReturnType>
+        </Function>
         <EntityContainer Name="XSkillsModelStoreContainer">
+          <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Comment" EntityType="Self.Comment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ParaMaster" EntityType="Self.ParaMaster" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Posts" EntityType="Self.Posts" Schema="dbo" store:Type="Tables" />
@@ -139,9 +175,16 @@
           </FunctionImport>
           <EntitySet Name="ScratchPads" EntityType="XSkillsModel.ScratchPad" />
           <FunctionImport Name="sp_GetMessages" ReturnType="Collection(XSkillsModel.sp_GetMessages_Result)">
-          <Parameter Name="CommentID" Mode="In" Type="Int32" />
+            <Parameter Name="CommentID" Mode="In" Type="Int32" />
             <Parameter Name="Username" Mode="In" Type="String" />
           </FunctionImport>
+          <FunctionImport Name="sp_GetSuggestions">
+          <Parameter Name="Username" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="splitstring" IsComposable="true" ReturnType="Collection(XSkillsModel.splitstring_Result)">
+          <Parameter Name="stringToSplit" Mode="In" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="AspNetUsers" EntityType="XSkillsModel.AspNetUser" />
         </EntityContainer>
         <EntityType Name="User_Profile">
           <Key>
@@ -154,6 +197,8 @@
           <Property Name="Trainings" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Certifications" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="ImgUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Suggestions" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Aspirational_Skills" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Comment">
           <Key>
@@ -286,6 +331,29 @@
           <Property Type="Int32" Name="ParentId" Nullable="false" />
           <Property Type="String" Name="ImgUrl" Nullable="true" />
         </ComplexType>
+        <ComplexType Name="splitstring_Result">
+          <Property Type="Int32" Name="id" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="true" MaxLength="500" />
+        </ComplexType>
+        <EntityType Name="AspNetUser">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="EmailConfirmed" Type="Boolean" Nullable="false" />
+          <Property Name="PasswordHash" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SecurityStamp" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNumberConfirmed" Type="Boolean" Nullable="false" />
+          <Property Name="TwoFactorEnabled" Type="Boolean" Nullable="false" />
+          <Property Name="LockoutEndDateUtc" Type="DateTime" Precision="3" />
+          <Property Name="LockoutEnabled" Type="Boolean" Nullable="false" />
+          <Property Name="AccessFailedCount" Type="Int32" Nullable="false" />
+          <Property Name="UserName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="LastLoginOn" Type="DateTime" Precision="3" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -295,6 +363,8 @@
           <EntitySetMapping Name="User_Profile">
             <EntityTypeMapping TypeName="XSkillsModel.User_Profile">
               <MappingFragment StoreEntitySet="User_Profile">
+                <ScalarProperty Name="Aspirational_Skills" ColumnName="Aspirational_Skills" />
+                <ScalarProperty Name="Suggestions" ColumnName="Suggestions" />
                 <ScalarProperty Name="ImgUrl" ColumnName="ImgUrl" />
                 <ScalarProperty Name="Certifications" ColumnName="Certifications" />
                 <ScalarProperty Name="Trainings" ColumnName="Trainings" />
@@ -413,6 +483,35 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_GetSuggestions" FunctionName="XSkillsModel.Store.sp_GetSuggestions" />
+          <FunctionImportMapping FunctionImportName="splitstring" FunctionName="XSkillsModel.Store.splitstring">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="XSkillsModel.splitstring_Result">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="AspNetUsers">
+            <EntityTypeMapping TypeName="XSkillsModel.AspNetUser">
+              <MappingFragment StoreEntitySet="AspNetUsers">
+                <ScalarProperty Name="LastLoginOn" ColumnName="LastLoginOn" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="AccessFailedCount" ColumnName="AccessFailedCount" />
+                <ScalarProperty Name="LockoutEnabled" ColumnName="LockoutEnabled" />
+                <ScalarProperty Name="LockoutEndDateUtc" ColumnName="LockoutEndDateUtc" />
+                <ScalarProperty Name="TwoFactorEnabled" ColumnName="TwoFactorEnabled" />
+                <ScalarProperty Name="PhoneNumberConfirmed" ColumnName="PhoneNumberConfirmed" />
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="SecurityStamp" ColumnName="SecurityStamp" />
+                <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
+                <ScalarProperty Name="EmailConfirmed" ColumnName="EmailConfirmed" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

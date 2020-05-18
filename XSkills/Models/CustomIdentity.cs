@@ -10,5 +10,6 @@ namespace XSkills.Models
     public class CustomIdentity : IdentityUser
     {
         public string Name { get; set; }
+        public DateTime LastLoginOn { get; set; }
     }
 }

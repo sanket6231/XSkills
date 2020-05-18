@@ -33,6 +33,7 @@ namespace XSkills
         public virtual DbSet<ParaMaster> ParaMasters { get; set; }
         public virtual DbSet<Rating> Ratings { get; set; }
         public virtual DbSet<ScratchPad> ScratchPads { get; set; }
+        public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
     
         public virtual ObjectResult<sp_Filter_Posts_Result> sp_Filter_Posts(string postedBy, string sectionType, string skills)
         {
@@ -75,6 +76,25 @@ namespace XSkills
                 new ObjectParameter("Username", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<sp_GetMessages_Result>("sp_GetMessages", commentIDParameter, usernameParameter);
+        }
+    
+        public virtual int sp_GetSuggestions(string username)
+        {
+            var usernameParameter = username != null ?
+                new ObjectParameter("Username", username) :
+                new ObjectParameter("Username", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_GetSuggestions", usernameParameter);
+        }
+    
+        [DbFunction("XSkillsEntities1", "splitstring")]
+        public virtual IQueryable<splitstring_Result> splitstring(string stringToSplit)
+        {
+            var stringToSplitParameter = stringToSplit != null ?
+                new ObjectParameter("stringToSplit", stringToSplit) :
+                new ObjectParameter("stringToSplit", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.CreateQuery<splitstring_Result>("[XSkillsEntities1].[splitstring](@stringToSplit)", stringToSplitParameter);
         }
     }
 }

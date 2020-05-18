@@ -59,15 +59,25 @@ namespace XSkills.Controllers
             string user = User.Identity.GetUserName();
             string name = dbContext.Users.Where(x => x.Email == user).FirstOrDefault().Name;
             
-            User_Profile model = xSkills.User_Profile.Where(x => x.Name == name).FirstOrDefault();
+            var model = xSkills.User_Profile.Where(x => x.Name == name).FirstOrDefault();
+            EditProfileModel editProfile = new EditProfileModel() {
+                Name = model.Name,
+                Wave = model.Wave,
+                Skills = model.Skills,
+                Trainings = model.Trainings,
+                Certifications = model.Certifications,
+                ImgUrl = model.ImgUrl,
+                Suggestions = model.Suggestions,
+                AspirationSkills = GetItems(model.Aspirational_Skills,"Skills")
+            };
             //ViewBag.ImageUrl = model.ImgUrl;
             //ViewBag.username = name;
-            return View(model);
+            return View(editProfile);
         }
 
         [HttpPost]
         [Authorize]
-        public ActionResult EditProfile(User_Profile model, HttpPostedFileBase postedFile)
+        public ActionResult EditProfile(EditProfileModel model, HttpPostedFileBase postedFile)
         {
             //string username = (string)TempData["UserName"];
             if (postedFile != null)
@@ -92,10 +102,13 @@ namespace XSkills.Controllers
                 xmodel.Trainings = model.Trainings;
                 xmodel.Certifications = model.Certifications;
                 xmodel.ImgUrl = ViewBag.ImageUrl == null ? model.ImgUrl : ViewBag.ImageUrl;
+                xmodel.Aspirational_Skills = string.Join(",", model.AspirationSkillsIds);
+
                 model.ImgUrl = ViewBag.ImageUrl == null ? model.ImgUrl : ViewBag.ImageUrl;
+
                 entities.SaveChanges();
             }
-
+            model.AspirationSkills = GetItems(model.Aspirational_Skills, "Skills");
             return View(model);
         }
 
@@ -129,7 +142,7 @@ namespace XSkills.Controllers
         }
 
         [Authorize]
-        public JsonResult GetNotificationContacts()
+        public JsonResult GetNotificationContacts(string WhenCalled)
         {
             string user = User.Identity.GetUserName();
             string name = dbContext.Users.Where(x => x.Email == user).FirstOrDefault().Name;
@@ -138,8 +151,40 @@ namespace XSkills.Controllers
             NotificationComponent NC = new NotificationComponent();
             var list = NC.GetNotifications(Convert.ToDateTime(Session["LastUpdated"]), name);
             //update session here for get only new added contacts (notification)
-            Session["LastUpdated"] = DateTime.Now;
+            if (WhenCalled == "update") {
+                Session["LastUpdated"] = DateTime.Now;
+            }
             return new JsonResult { Data = list, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+        }
+
+        private List<SelectListItem> GetItems(string suggestions, string category)
+        {
+            List<SelectListItem> items = new List<SelectListItem>();
+            if (category != null) {
+                List<string> suggestion = suggestions.Split(',').ToList();
+                var getitems = xSkills.ParaMasters.Where(x => x.Category == category).ToList();
+                foreach (var item in getitems) {
+                    if (suggestion.Contains(item.Value))
+                    {
+                        items.Add(new SelectListItem
+                        {
+                            Text = item.Text,
+                            Value = item.Value,
+                            Selected = true
+                        });
+                    }
+                    else {
+                        items.Add(new SelectListItem
+                        {
+                            Text = item.Text,
+                            Value = item.Value
+                        });
+                    }
+                    
+                }
+            }
+
+            return items;
         }
     }
 }

@@ -79,6 +79,9 @@ namespace XSkills.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
+                    ApplicationDbContext dbContext = new ApplicationDbContext();
+                    var currentTime = dbContext.Users.Where(x => x.Email == model.Email).FirstOrDefault().LastLoginOn;
+                    Session["LastUpdated"] = currentTime;
                     return Redirect("/KnowledgeHub/Index");
                     //return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
@@ -392,7 +395,19 @@ namespace XSkills.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
+            string userid = User.Identity.Name;
+            
+            using (var dbContext = new ApplicationDbContext())
+            {
+                string username = dbContext.Users.Where(x => x.Email == userid).FirstOrDefault().Name;
+                var _user = dbContext.Users.Where(x => x.Email == userid).FirstOrDefault();
+                _user.LastLoginOn = DateTime.Now;
+                dbContext.Users.Attach(_user);
+                dbContext.Entry(_user).Property(X => X.LastLoginOn).IsModified = true;
+                dbContext.SaveChanges();
+            }
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            
             return RedirectToAction("Index", "Home");
         }
 

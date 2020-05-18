@@ -175,6 +175,9 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="AspNetUser.cs">
+      <DependentUpon>XSkillsEntity.tt</DependentUpon>
+    </Compile>
     <Compile Include="Comment.cs">
       <DependentUpon>XSkillsEntity.tt</DependentUpon>
     </Compile>
@@ -232,6 +235,9 @@
     <Compile Include="ScratchPad.cs">
       <DependentUpon>XSkillsEntity.tt</DependentUpon>
     </Compile>
+    <Compile Include="splitstring_Result.cs">
+      <DependentUpon>XSkillsEntity.tt</DependentUpon>
+    </Compile>
     <Compile Include="sp_FilterPosts_Result.cs">
       <DependentUpon>XSkillsEntity.tt</DependentUpon>
     </Compile>
@@ -263,6 +269,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Bootshrap.css" />
+    <Content Include="Content\bootstrap-multiselect.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -271,6 +278,7 @@
     <Content Include="Content\posts.css" />
     <Content Include="Content\Rating\dist\starrr.css" />
     <Content Include="Content\Rating\dist\starrr.js" />
+    <Content Include="Scripts\bootstrap-multiselect.js" />
     <Content Include="Scripts\handlebars-v4.0.12.js" />
     <Content Include="Scripts\jquery-ui.js" />
     <Content Include="Scripts\jquery-ui.min.js" />
@@ -300,6 +308,7 @@
     <Content Include="Content\Rating\src\starrr.coffee" />
     <Content Include="Content\Rating\src\starrr.scss" />
     <Content Include="libman.json" />
+    <Content Include="Content\bootstrap-multiselect.less" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />

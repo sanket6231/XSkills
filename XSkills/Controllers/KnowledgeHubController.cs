@@ -18,8 +18,13 @@ namespace XSkills.Controllers
         public ActionResult Index()
         {
             ViewBag.Title = "Knowledge Hub";
-            
+            string userid = User.Identity.Name;
+            string username = dbContext.Users.Where(x => x.Email == userid).FirstOrDefault().Name;
+            ViewBag.username = username;
             var model = context.sp_Filter_Posts("All","All","All").OrderByDescending(x => x.CreatedDate).ToList();
+            
+            var currentTime = dbContext.Users.Where(x => x.Email == User.Identity.Name).First().LastLoginOn;
+            Session["LastUpdated"] = currentTime;
 
             return View(model);
         }
@@ -241,10 +246,43 @@ namespace XSkills.Controllers
         [HttpPost]
         public ActionResult GetUsers()
         {
-            ApplicationDbContext dbContext = new ApplicationDbContext();
             var users = dbContext.Users.Select(u => u.Name).ToList();
             return Json(users, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpGet]
+        public JsonResult displaySuggestions()
+        {
+            string userid = User.Identity.Name;
+            var username = dbContext.Users.Where(x => x.Email == userid).FirstOrDefault().Name;
+            var model = context.User_Profile.Where(x => x.Name == username).FirstOrDefault();
+            if (model.Suggestions.ToString() == "Y") {
+                string[] skills = model.Aspirational_Skills.Split(',');
+                List<string> names = context.User_Profile.Where(x => skills.Contains(x.Skills)).Select(x => x.Name).ToList();
+                //var names = context.sp_GetSuggestions(username: username).;
+                return Json(new { Suggestions = model.Suggestions.ToString(), Names = string.Join(",", names) }, JsonRequestBehavior.AllowGet);
+            }
+
+            
+            return Json(new { Suggestions = model.Suggestions.ToString() }, JsonRequestBehavior.AllowGet);
+        }
+        [HttpPost]
+        public JsonResult displaySuggestions(string value)
+        {
+            string userid = User.Identity.Name;
+            var username = dbContext.Users.Where(x => x.Email == userid).FirstOrDefault().Name;
+            if (value == "N") {
+                var user_profile = context.User_Profile.Where(x => x.Name == username).FirstOrDefault();
+                var _user = new User_Profile() { Name= user_profile.Name,Wave = user_profile.Wave, Suggestions = value };
+
+                using (var newContext = new XSkillsEntities1())
+                {
+                    newContext.User_Profile.Attach(_user);
+                    newContext.Entry(_user).Property(X => X.Suggestions).IsModified = true;
+                    newContext.SaveChanges();
+                }
+            }
+            return Json(new { error = false }, JsonRequestBehavior.AllowGet);
+        }
     }
 }
